@@ -3,3 +3,5 @@ __pycache__/
 venv/
 *.pyc
 instance/
+static/article_image
+static/profile_image
