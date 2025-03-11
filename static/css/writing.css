@@ -45,15 +45,8 @@
   width: 100px;
 }
 .btn-group-vertical .btn {
-  background-color: transparent;
-  color: #333;
   font-weight: bold;
-  border: none;
-}
-.btn-group-vertical .btn:active,
-.btn-group-vertical .btn:focus {
-  background-color: #8c8c8c;
-  color: #fff;
+  border-radius: 10px; /* 원하는 둥근 정도로 설정 */
 }
 
 .right-section {

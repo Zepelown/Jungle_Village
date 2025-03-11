@@ -43,14 +43,14 @@
         <!-- Content Block -->
         <div class="content">
             <div class="container d-flex justify-content-end">
-                <form id="searchForm" action="/" method="GET" class="d-flex gap-2 align-items-center">
-                    <select name="category" class="form-select" style="width: 150px;" onchange="submitForm()">
+                <form id="searchForm" action="/" method="GET" class="d-flex gap-2 align-items-center ">
+                    <select name="category" class="form-select mr-2 w-50" style="width: 150px;" onchange="submitForm()">
                         <option value="">전체</option>
                         <option value="개발" {% if category == "개발" %}selected{% endif %}>개발</option>
                         <option value="일상" {% if category == "일상" %}selected{% endif %}>일상</option>
                     </select>
                     <input type="text" name="q" id="searchInput" placeholder="검색어 입력" value="{{ query }}" class="form-control" style="width: 250px;">
-                    <button type="submit" class="btn btn-primary" style="height: 38px; padding: 5px 15px;">검색</button>
+                    <button type="submit" class="btn btn-primary ml-1" style="height: 38px; padding: 5px 15px; width: 100px;">검색</button>
                 </form>
             </div>
             
@@ -62,10 +62,13 @@
                         <img src="{{ profile_img if profile_img else '../static/default_img.png' }}" alt="프로필 이미지" />
                     </div>
                     <p class="nickname"> 정글러</p>
-
-                    <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
-                        <button type="button" class="btn btn-primary mb-3" data-url="{{ url_for('articles.write') }}" onclick="window.location.href=this.getAttribute('data-url');">글쓰기</button>
+                    
+                    <div class="container d-flex flex-column align-items-center w-100">
+                        <button type="button" class="btn btn-outline-secondary mb-2 w-60">로그아웃</button>
+                        <button type="button" class="btn btn-outline-primary w-60 mt-3" data-url="{{ url_for('articles.write') }}" onclick="window.location.href=this.getAttribute('data-url');">글쓰기</button>
                     </div>
+
+                    
                 </div>
                 {% block content %}
 
