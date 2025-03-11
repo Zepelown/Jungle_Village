@@ -15,7 +15,7 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">
-                <a href="{{ url_for('article_detail', article_id=article['_id']) }}" class="text-decoration-none">
+                <a href="{{ url_for('articles.article_detail', article_id=article['_id']) }}" class="text-decoration-none">
                     {{ article['title'] }}
                 </a>
             </h5>
@@ -39,7 +39,7 @@
     </div>
     <li>
     </li>
-    
+
     {% else %}
     <li>No articles found.</li>
     {% endfor %}
