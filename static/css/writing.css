@@ -13,6 +13,7 @@
 
 .container {
   display: flex;
+  max-width: 800px; /* 최대 너비 */
   justify-content: space-between;
   align-items: flex-start;
   margin-top: 10px;
@@ -56,10 +57,25 @@
 }
 
 .right-section {
-  flex: 1;
   margin-left: 20px;
   padding: 20px;
+  display: flex;
+  width: 600px;
   border: 1px solid gray;
   border-radius: 10px;
   background-color: #f9f9f9;
+}
+
+.form {
+  width: 100%;
+}
+
+.form-group {
+  width: 100%;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
 }

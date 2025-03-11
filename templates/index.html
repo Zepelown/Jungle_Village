@@ -24,10 +24,7 @@ href="{{ url_for('static', filename='css/writing.css') }}"
             <button type="button" class="btn btn-primary mb-3">생활</button>
         </div>
     </div>
-    <ul>
-
-
-
+    <div class="right-section row">
         {% for article in articles %}
         <div class="card mb-4">
             <div class="card-body ">
@@ -57,8 +54,8 @@ href="{{ url_for('static', filename='css/writing.css') }}"
         </div>
 
         {% else %}
-        <li>No articles found.</li>
+        <p>No articles found.</p>
         {% endfor %}
-    </ul>
+    </div>
 </div>
 {% endblock %}
