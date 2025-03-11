@@ -16,5 +16,15 @@ db = client.get_database()
 def home():
     return render_template("index.html", message="Hello, Flask with MongoDB!")
 
+@app.route("/write")
+def write():
+    nickname="정글러"
+    profile_img = None
+    return render_template('write.html', nickname=nickname, profile_img=profile_img)
+
+@app.route("/mypage")
+def mypage():
+    return render_template('mypage.html')
+
 if __name__ == "__main__":
     app.run(debug=True)
