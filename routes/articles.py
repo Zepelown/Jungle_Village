@@ -47,3 +47,13 @@ def article_detail(article_id):
             reply['user_info'] = users_collection.find_one({"_id": ObjectId(reply['user_id'])})
     
     return render_template("article_detail.html", article=article, user=user, comments=comments)
+
+@bp.route("/write")
+def write():
+    nickname="정글러"
+    profile_img = None
+    return render_template('write.html', nickname=nickname, profile_img=profile_img)
+
+@bp.route("/mypage")
+def mypage():
+    return render_template('mypage.html')
