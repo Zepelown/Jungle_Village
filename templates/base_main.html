@@ -18,7 +18,8 @@
     <div class="container" style="display: flex; flex-direction: column; min-height: 10vh;">
         <!-- navbar -->
         <nav class="navbar navbar-light" style="background-color: #ffffff;">
-            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('articles.index')}}" style="font-weight: bold;">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('articles.index')}}"
+                style="font-weight: bold;">
                 <img src="../static/logo.png" width="60px" class="d-inline-block align-top" />
                 <span class="ml-2">정글 마을</span>
             </a>
@@ -26,7 +27,7 @@
 
         <!-- Flash messages -->
         {% for message in get_flashed_messages(with_categories=true) %}
-            <p class="{{ message[0] }}">{{ message[1] }}</p>
+        <p class="{{ message[0] }}">{{ message[1] }}</p>
         {% endfor %}
 
         <!-- Content Block -->
@@ -38,8 +39,26 @@
                 </form>
             </div>
 
-            {% block content %}
-            {% endblock %}
+            <div class="container">
+                <div class="profile-container">
+                    <div class="profile">
+                        <img src="{{ profile_img if profile_img else '../static/default_img.png' }}" alt="프로필 이미지" />
+                    </div>
+                    <p class="nickname">{{ nickname }}</p>
+
+                    <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+                        <button type="button" class="btn btn-primary mb-3" data-url="{{ url_for('articles.write') }}" onclick="window.location.href=this.getAttribute('data-url');">글쓰기</button>
+                        <button type="button" class="btn btn-primary mb-3">개발</button>
+                        <button type="button" class="btn btn-primary mb-3">일상</button>
+                    </div>
+                </div>
+                {% block content %}
+
+                {% endblock %}
+            </div>
+
+
+
         </div>
     </div>
 </body>
