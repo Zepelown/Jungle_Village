@@ -52,7 +52,7 @@ def article_detail(article_id):
 def write():
     nickname="정글러"
     profile_img = None
-    return render_template('write.html', nickname=nickname, profile_img=profile_img)
+    return render_template('article_write.html', nickname=nickname, profile_img=profile_img)
 
 @bp.route("/mypage")
 def mypage():
