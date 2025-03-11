@@ -1,20 +1,6 @@
-from flask import Flask, render_template
-from pymongo import MongoClient
-import os
-from dotenv import load_dotenv
+from create_app import create_app
 
-load_dotenv()
-
-app = Flask(__name__)
-
-# MongoDB 연결 설정
-MONGO_URI = os.getenv("MONGO_URI")
-client = MongoClient(MONGO_URI)
-db = client.get_database()
-
-@app.route("/")
-def home():
-    return render_template("index.html", message="Hello, Flask with MongoDB!")
+app = create_app()  # app.py에서 생성한 Flask 애플리케이션 인스턴스 가져오기
 
 if __name__ == "__main__":
     app.run(debug=True)
