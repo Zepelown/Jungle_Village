@@ -45,7 +45,6 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-
 @bp.route("/")
 def index():
     token = request.cookies.get("jwt")
@@ -84,9 +83,7 @@ def index():
 
 @bp.route("/<article_id>")
 def article_detail(article_id):
-    token = request.cookies.get("jwt")
-    if not (token and verify_token(token)):
-        return redirect(url_for("auth.log_in"))
+    user_data = get_user_data_by_token()
     
     article = articles_collection.find_one({"_id": ObjectId(article_id)})
     if not article:
@@ -94,7 +91,7 @@ def article_detail(article_id):
         return redirect(url_for("articles.index"))
     
 
-    user = users_collection.find_one({"_id": ObjectId(article["user_id"])})
+    writer = users_collection.find_one({"_id": ObjectId(article["user_id"])})
     comments = list(
         comments_collection.find(
             {"article_id": article_id},
@@ -116,7 +113,7 @@ def article_detail(article_id):
     total_comments += sum(len(comment.get('replies', [])) for comment in comments)
 
     return render_template(
-        "article_detail.html", article=article, user=user, comments=comments, total_comments=total_comments
+        "article_detail.html", article=article, writer=writer, comments=comments, total_comments=total_comments,user=user_data
     )
 
 
@@ -249,6 +246,9 @@ def delete_comment():
         if not user_id or not comment_id:
             return jsonify({"error": "필수 데이터가 누락되었습니다."}), 400
         # 해당 댓글에 대댓글 추가
+        
+        if comment_id != user_id:
+            return jsonify({"error": "이 댓글은 사용자가 작성한 것이 아닙니다."}), 403
         
         comments_collection.delete_one({"_id": ObjectId(comment_id), "user_id": user_id})
         return jsonify(

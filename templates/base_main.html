@@ -37,20 +37,6 @@
         $(document).ready(function () {
             load_user_and_setting();
         });
-
-        function logout(){
-            $.ajax({
-                url: "/auth/log_out",
-                method: "POST",
-                contentType: "application/json",
-                success: function (response) {
-                    alert("로그아웃을 성공했습니다.")
-                },
-                error: function (xhr) {
-                    alert("로그아웃을 실패했습니다: " + xhr.responseJSON.error);
-                }
-            })
-        }
     </script>
 
     {% block script %}
