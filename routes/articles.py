@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, current_app, send_from_directory
 from bson.objectid import ObjectId
 from create_app import mongo, SECRET_KEY
 import jwt
@@ -79,6 +79,10 @@ def index():
     return render_template(
         "index.html", articles=articles, query=query, category=category
     )
+    
+@bp.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico')
 
 
 @bp.route("/<article_id>")
