@@ -57,8 +57,11 @@
             <div class="container">
                 <div class="profile-container">
                     <div class="profile">
-                        <img src="{{ profile_img if profile_img else '../static/default_img.png' }}" alt="프로필 이미지" />
+                        <a href="{{ url_for('auth.mypage') }}">
+                            <img src="{{ profile_img if profile_img else '../static/default_img.png' }}" alt="프로필 이미지" />
+                        </a>
                     </div>
+                    
                     <p class="nickname"> 정글러</p>
                     
                     <div class="container d-flex flex-column align-items-center w-100">
