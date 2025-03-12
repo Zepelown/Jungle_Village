@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>회원 가입</title>
+    <title>비밀번호 찾기</title>
     <style>
         body, html {
             height: 100%;
@@ -76,7 +76,7 @@
         function get_otp(){
             let email_check = $('#checkbox_email').text();
             if(email_check === '❌'){
-                alert('중복 메일 체크부터 해주세요!');
+                alert('비정상적 접근입니다.');
             }
             else{
                 $.ajax({
@@ -98,7 +98,27 @@
                 success: function (response) {
                     alert(response['message']);
                     if(response['check'] === "true"){
+                        document.getElementById("otp_code").disabled = true;
                         $('#checkbox_otp').text("✅")
+                        if ($("#new_password_container").length === 0) {
+                            let new_pw = Math.floor(100000 + Math.random() * 900000);
+                            let temp_html = `
+                                <div id="otp_input_container">
+                                    <p class="header_font"><span>새로운 비밀번호 발급</span></p>
+                                    <span>${new_pw}</span>    
+                                </div>
+                            `;
+                            $(temp_html).insertAfter("#otp_input_container");
+                            
+                            $.ajax({
+                                type: "POST",
+                                url: "/set_pw",
+                                data: { user_email: $('#user_email').val(), new_password: new_pw.toString() },
+                                success: function (response) {
+                                    alert(response['message']);
+                                }
+                            })
+                        }
                     }
                     else{
                         $('#checkbox_otp').text("❌")
@@ -120,10 +140,10 @@
                 url: "/check_email",
                 data: { user_email: email },
                 success: function (response) {
-                    alert(response['message']);
                     let check = response['check']
-                    if(check === 'true'){
+                    if(check === 'false'){
                         $("#checkbox_email").text("✅");
+                        document.getElementById("user_email").disabled = true;
                         if ($("#otp_input_container").length === 0) {
                             let temp_html = `
                                 <div id="otp_input_container">
@@ -137,10 +157,11 @@
                                     </div>
                                 </div>
                             `;
-                    $(temp_html).insertAfter("#email_container");
-                }
+                            $(temp_html).insertAfter("#email_container");
+                        }
                     }
                     else{
+                        alert('등록되지 않은 이메일 입니다.')
                         $("#checkbox_email").text("❌");
                     }
                 }
@@ -148,71 +169,10 @@
 
         }
 
-        function check_nickname(){
-            let nickname = $('#user_nickname').val();
-            if (!nickname) {
-                alert("닉네임을 확인하세요!");
-                return;
-            }
+       
 
-            $.ajax({
-                type: "POST",
-                url: "/check_nickname",
-                data: { user_nickname: nickname },
-                success: function (response) {
-                    alert(response['message']);
-                    let check = response['check']
-                    if(check === 'true'){
-                        $("#checkbox_nickname").text("✅");
-                    }
-                    else{
-                        $("#checkbox_nickname").text("❌");
-                    }
-                }
-            })
-        }
-
-        function complete_sign_up(){
-            let email = $('#user_email').val();
-            let password = $('#user_password').val();
-            let nickname = $('#user_nickname').val();
-            let generation = $('#user_generation').val();
-
-            if(!email || !password || !nickname || !generation){
-                alert('입력하지 않은 정보가 있습니다.');
-                return;
-            }
-
-            let check1 = $('#checkbox_email').text();
-            let check2 = $('#checkbox_nickname').text();
-            let check3 = $('#checkbox_otp').text();
-
-            if(check1 === "❌" || check2 === "❌" || check3 === "❌"){
-                alert('중복 이메일 또는 중복 닉네임 또는 인증실패 입니다.');
-                return;
-            }
-
-            $.ajax({
-                type: "POST",
-                url: "/complete_sign_up",
-                data: { user_email: email, user_password: password, user_nickname: nickname, user_generation: generation},
-                success: function (response) {
-                    alert(response['result']);
-                    window.location.href = "/log_in"; 
-
-                }
-            })
-           
-        }
-
-        function toggle_password() {
-                const password_input = document.getElementById("user_password");
-                 if (password_input.type === "password") {
-                     password_input.type = "text";  // 비밀번호 보이기
-                } else {
-                    password_input.type = "password"; // 비밀번호 숨기기
-                }
-        }
+      
+      
     </script>
 </head>
 <body>
@@ -224,35 +184,12 @@
             </div>
             <div class="sign_up_format">
                 <div id="email_container">
-                    <p class="header_font"><span>이메일</span><button class="btn btn-link" onclick="check_email()">중복확인</button></p>
+                    <p class="header_font"><span>이메일</span><button class="btn btn-link" onclick="check_email()">이메일 확인</button></p>
                     <p>
                       <input class="input_size" id="user_email" type="text"><span id="checkbox_email">❌</span>
                     </p>
                 </div>
-                <p class="header_font">비밀번호</p>
-                <p>
-                    <input class="input_size" id="user_password" type="password">
-                    <button class="toggle_button" onclick="toggle_password()">👁️</button>
-                </p>
-                <p class="header_font"><span>닉네임</span><button class="btn btn-link" onclick="check_nickname()">중복확인</button></p>
-                <p>
-                    <input class="input_size" id="user_nickname" type="text"><span id="checkbox_nickname">❌</span>
-                </p>
-                <p class="header_font">크래프톤 정글 기수</p>
-                <p>
-                    <select id="user_generation">
-                        <option value="">기수를 선택하세요</option>
-                        <option value="1">1기</option>
-                        <option value="2">2기</option>
-                        <option value="3">3기</option>
-                        <option value="4">4기</option>
-                        <option value="5">5기</option>
-                        <option value="6">6기</option>
-                        <option value="7">7기</option>
-                        <option value="8">8기</option>
-                    </select>
-                </p>
-                <p><button class="btn btn-link" id="btn_submit" type="submit" onclick="complete_sign_up()">제출하기</button></p>
+                <p><button class="btn btn-link" id="btn_submit" type="submit" onclick="">돌아가기</button></p>
                 
             </div>
         </div>

@@ -79,7 +79,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-
+       
 
         function sign_in() {
             let email = $('#user_email').val();
@@ -109,7 +109,7 @@
     <div class="main_panel">
         <div class="sign_in_panel">
             <div class="sign_in_title">
-                <p><img class="logo_img" src="../static/logo.png"></p>
+                <p><img class="logo_img" id="logo_image" src="../static/logo.png"></p>
                 <p class="logo_title">정글마을</p>
             </div>
             <div class="sign_in_format">
@@ -120,6 +120,7 @@
                 <p><input class="input_size" id="user_email" type="email" placeholder="이메일을 입력하세요."></p>
                 <p class="password_header">
                     <span class="header_font">비밀번호</span>
+                    <button onclick="location.href='/find_pw'" class="btn btn-link">비밀번호 찾기</button>
                 </p>
                 <p><input class="input_size" id="user_password" type="password" placeholder="비밀번호를 입력하세요."></p>
                 <p><button class="button_size" id="btn_submit" type="submit" onclick="sign_in()">제출하기</button></p>

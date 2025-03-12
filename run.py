@@ -22,13 +22,14 @@ app.config['MAIL_DEFAULT_SENDER'] = 'jungle.8.306.5@gmail.com'
 
 mail = Mail(app)
 otp_store = {}
-# MongoDB 연결 설정
-# MONGO_URI = os.getenv("MONGO_URI")
-# client = MongoClient(MONGO_URI)
-# db = client.get_database()
 
-client = MongoClient('localhost', 27017)
-db = client.testJungle
+
+MONGO_URI = os.getenv("MONGO_URI")
+client = MongoClient(MONGO_URI)
+db = client.get_database()
+
+# client = MongoClient('localhost', 27017)
+# db = client.testJungle
 user_from_db = db.users         
 
 #유저테이블 참조
@@ -153,6 +154,17 @@ def log_out():
     response.set_cookie("jwt", "", expires=0)  
     return response
 
+@app.route("/find_pw")
+def find_pw():
+    return render_template("find_pw.html")
+
+@app.route("/set_pw", methods=["POST"])
+def set_pw():
+    email = request.form['user_email']
+    new_password = request.form['new_password']
+
+    db.users.update_one({"email": email}, {"$set": {"password": new_password}})
+    return jsonify({"message": "비밀번호 변경 성공"})
 
 @app.route("/check_email", methods=["POST"])
 def check_email():
