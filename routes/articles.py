@@ -111,10 +111,6 @@ def reply():
         user_id = data.get("user_id")  # 현재 로그인한 사용자 ID
         content = data.get("content")
 
-        print(comment_id)
-        print(user_id)
-        print(content)
-
         if not comment_id or not user_id or not content:
             return jsonify({"error": "필수 데이터가 누락되었습니다."}), 400
 
@@ -151,6 +147,44 @@ def reply():
         return jsonify({"error": str(e)}), 500
 
 
+@bp.route("/reply", methods=["DELETE"])
+def delete_reply():
+    try:
+        data = request.json
+        comment_id = data.get("comment_id")  # 댓글 ID
+        reply_id = data.get("reply_id")  # 삭제할 대댓글 ID
+        user_id = data.get("user_id")  # 현재 로그인한 사용자 ID
+
+        if not comment_id or not reply_id or not user_id:
+            return jsonify({"error": "필수 데이터가 누락되었습니다."}), 400
+
+        # 해당 댓글을 찾아서 대댓글이 존재하는지 확인
+        comment = comments_collection.find_one({"_id": ObjectId(comment_id)})
+
+        if not comment:
+            return jsonify({"error": "댓글을 찾을 수 없습니다."}), 404
+
+        # 대댓글이 존재하는지 확인
+        reply = next((r for r in comment.get("replies", []) if str(r["_id"]) == reply_id), None)
+
+        if not reply:
+            return jsonify({"error": "대댓글을 찾을 수 없습니다."}), 404
+
+        # 대댓글이 요청한 사용자에 의해 작성되었는지 확인
+        if reply["user_id"] != user_id:
+            return jsonify({"error": "이 대댓글은 사용자가 작성한 것이 아닙니다."}), 403
+
+        # 대댓글 삭제
+        comments_collection.update_one(
+            {"_id": ObjectId(comment_id)},
+            {"$pull": {"replies": {"_id": ObjectId(reply_id)}}}
+        )
+
+        return jsonify({"message": "대댓글이 성공적으로 삭제되었습니다."})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @bp.route("/comment", methods=["POST"])
 def comment():
     try:
@@ -177,7 +211,28 @@ def comment():
 
         return jsonify(
             {
-                "message": "답글이 성공적으로 추가되었습니다.",
+                "message": "댓글이 성공적으로 추가되었습니다.",
+            }
+        )
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@bp.route("/comment", methods=["DELETE"])
+def delete_comment():
+    try:
+        data = request.json
+        comment_id = data.get("comment_id")
+        user_id = data.get("user_id")
+
+        if not user_id or not comment_id:
+            return jsonify({"error": "필수 데이터가 누락되었습니다."}), 400
+        # 해당 댓글에 대댓글 추가
+        
+        comments_collection.delete_one({"_id": ObjectId(comment_id), "user_id": user_id})
+        return jsonify(
+            {
+                "message": "댓글이 성공적으로 삭제되었습니다.",
             }
         )
 
@@ -185,6 +240,3 @@ def comment():
         return jsonify({"error": str(e)}), 500
 
 
-@bp.route("/mypage")
-def mypage():
-    return render_template("mypage.html")

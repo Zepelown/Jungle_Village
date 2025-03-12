@@ -94,7 +94,7 @@ def sign_in():
 
     if result:
         token = jwt.encode(
-            {"email": email, "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=1)},
+            {"email": email, "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
             SECRET_KEY,
             algorithm="HS256"
         )
@@ -164,3 +164,8 @@ def check_nickname():
     else:
         response = jsonify({"message": "사용 가능 닉네임입니다.", "check": "true"})
         return response
+
+@bp.route("/mypage")
+def mypage():
+    return render_template("mypage.html")
+
