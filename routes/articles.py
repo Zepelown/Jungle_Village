@@ -1,6 +1,11 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from bson.objectid import ObjectId
-from create_app import mongo
+from create_app import mongo, SECRET_KEY
+import jwt
+import hashlib
+import requests
+import datetime
+import random
 
 bp = Blueprint("articles", __name__)
 
@@ -9,9 +14,22 @@ articles_collection = mongo.db.articles
 users_collection = mongo.db.users
 comments_collection = mongo.db.comments
 
+def verify_token(token):
+    try:
+        result = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        return result
+    except jwt.ExpiredSignatureError:
+        return None
+    except jwt.InvalidTokenError:
+        return None
+
 
 @bp.route("/")
 def index():
+    token = request.cookies.get("jwt")
+
+    if not (token and verify_token(token)):
+        return redirect(url_for("auth.log_in"))
     query = request.args.get("q", "").strip()  # 검색어 가져오기
     category = request.args.get("category", "").strip()  # 선택한 카테고리 가져오기
 

@@ -92,7 +92,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/sign_in",
+                url: "/auth/sign_in",
                 data: { user_email: email, user_password: password },
                 success: function (response) {
                     alert(response['message']);
@@ -102,7 +102,7 @@
         }
 
         function to_qna(){
-            window.location.href = '/qna';
+            window.location.href = '/auth/qna';
         }
         
     </script>
@@ -118,12 +118,12 @@
             <div class="sign_in_format">
                 <p class="email_header">
                     <span class="header_font">이메일</span>
-                    <button onclick="location.href='/sign_up'" class="btn btn-link">회원가입</button>
+                    <button onclick="location.href='/auth/sign_up'" class="btn btn-link">회원가입</button>
                 </p>
                 <p><input class="input_size" id="user_email" type="email" placeholder="이메일을 입력하세요."></p>
                 <p class="password_header">
                     <span class="header_font">비밀번호</span>
-                    <button onclick="location.href='/find_pw'" class="btn btn-link">비밀번호 찾기</button>
+                    <button onclick="location.href='/auth/find_pw'" class="btn btn-link">비밀번호 찾기</button>
                 </p>
                 <p><input class="input_size" id="user_password" type="password" placeholder="비밀번호를 입력하세요."></p>
                 <p><button class="button_size btn btn-link" id="btn_submit" type="submit" onclick="sign_in()">제출하기</button></p>

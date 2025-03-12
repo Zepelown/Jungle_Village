@@ -1,32 +1,3 @@
-
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>Flask App</title>
-    <script>
-        function log_out(){
-            $.ajax({
-                type: "POST",
-                url: "/log_out",
-                data: {},
-                success: function (response) {
-                    alert(response['message']);
-                    window.location.href = "/";
-                }
-            })
-        }
-    </script>
-     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
-    <h1>{{ message }}</h1>
-    <button onclick="log_out()">로그아웃</button>
-</body>
-</html>
-
-
-
 {% extends "base_main.html" %}
 
 {% block title %}홈{% endblock %}
