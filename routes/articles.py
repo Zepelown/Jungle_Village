@@ -255,7 +255,20 @@ def write():
         image_files = request.files.getlist('image')
         image_paths = []
 
-        if image_files:
+        #먼저 데이터 저장
+        article_data = {
+            "title": title,
+            "content": content,
+            "user_id": user_id,
+            "date": date,
+            "category": category,
+            "images": image_paths  #빈 리스트
+        }
+
+        result = articles_collection.insert_one(article_data)
+
+        if result:
+            article_id = result.inserted_id
             user_folder = os.path.join(UPLOAD_FOLDER, user_id)
             os.makedirs(user_folder, exist_ok=True)
 
@@ -264,20 +277,14 @@ def write():
                     filename = f"image{idx + 1}.{image_file.filename.rsplit('.', 1)[1].lower()}"
                     filepath = os.path.join(user_folder, filename)
                     image_file.save(filepath)
-                    image_paths.append(f"/static/article_image/{user_id}/{filename}")
-        
-        article_data = {
-            "title": title,
-            "content": content,
-            "user_id": user_id,
-            "date": date,
-            "category": category,
-            "images": image_paths
-        }
-        
-        result = articles_collection.insert_one(article_data)
 
-        if result:
-            return redirect(url_for("articles.index"))
-            
+                    image_paths.append(f"/static/article_image/{article_id}/{filename}")
+       
+        articles_collection.update_one(
+            {"_id": article_id},
+            {"$set": {"images": image_paths}}
+        )
+       
+        return redirect(url_for("articles.index"))
+           
     return render_template("write.html")
