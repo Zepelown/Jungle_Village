@@ -57,6 +57,9 @@ def home():
     else:
         return redirect(url_for("log_in"))
 
+@app.route("/qna")
+def load_qna():
+    return render_template("qna.html")
 
 @app.route("/send_otp", methods=['POST'])
 def send_otp():
