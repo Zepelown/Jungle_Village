@@ -94,7 +94,6 @@
                 method: "POST",
                 contentType: "application/json",
                 data: JSON.stringify({
-                    user_id: "67cfb44b8c8918f658c51832", // 실제 로그인된 사용자 ID로 변경 필요
                     article_id: article_id,
                     content: commentText
                 }),
@@ -115,7 +114,6 @@
                 method: "DELETE",
                 contentType: "application/json",
                 data: JSON.stringify({
-                    user_id: "67cfb44b8c8918f658c51832", // 실제 로그인된 사용자 ID로 변경 필요
                     comment_id: commentId,
                 }),
                 success: function (response) {

@@ -208,6 +208,7 @@ def comment():
     try:
         user_data = get_user_data_by_token()
         user_id = user_data.get("_id")  # ObjectId 문자열
+        print(user_id)
         
         data = request.json
         article_id = data.get("article_id")
@@ -235,6 +236,7 @@ def comment():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+
 @bp.route("/comment", methods=["DELETE"])
 def delete_comment():
     try:
@@ -242,15 +244,23 @@ def delete_comment():
         user_id = user_data.get("_id")  # ObjectId 문자열
         data = request.json
         comment_id = data.get("comment_id")
+        print(comment_id)
+        print(user_id)
 
         if not user_id or not comment_id:
             return jsonify({"error": "필수 데이터가 누락되었습니다."}), 400
-        # 해당 댓글에 대댓글 추가
-        
-        if comment_id != user_id:
+
+        # 댓글을 가져와서 user_id가 동일한지 확인
+        comment = comments_collection.find_one({"_id": ObjectId(comment_id)})
+
+        if not comment:
+            return jsonify({"error": "댓글을 찾을 수 없습니다."}), 404
+
+        if comment.get("user_id") != user_id:
             return jsonify({"error": "이 댓글은 사용자가 작성한 것이 아닙니다."}), 403
-        
-        comments_collection.delete_one({"_id": ObjectId(comment_id), "user_id": user_id})
+
+        # 댓글 삭제
+        comments_collection.delete_one({"_id": ObjectId(comment_id)})
         return jsonify(
             {
                 "message": "댓글이 성공적으로 삭제되었습니다.",
