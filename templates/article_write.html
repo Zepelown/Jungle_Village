@@ -1,37 +1,73 @@
-{% extends "base_main.html" %}
-
-{% block title %}홈{% endblock %}
-
-
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/writing.css') }}" />
-{% endblock %}
-
-{% block content %}
+{% extends "base_main.html" %} {% block title %}글쓰기 페이지{% endblock %} {%
+block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/writing.css') }}"
+/>
+{% endblock %} {% block content %}
 <div class="right-section" id="writeForm">
-  <form class="form">
+  <form
+    mehotd="POST"
+    enctype="multipart/form-data"
+    onsubmit="return validateFileCount()"
+    class="form"
+  >
     <div class="form-group">
       <label for="category">카테고리 선택</label>
-      <select class="form-control" id="category">
+      <select class="form-control" id="category" name="category">
         <option>개발</option>
         <option>일상</option>
       </select>
     </div>
 
     <div class="form-group">
-      <input type="text" class="form-control" id="title" placeholder="제목을 입력하세요" />
+      <input
+        type="text"
+        class="form-control"
+        id="title"
+        name="title"
+        placeholder="제목을 입력하세요"
+      />
     </div>
 
     <div class="form-group">
-      <textarea class="form-control" id="content" rows="6" placeholder="내용을 입력하세요"></textarea>
+      <textarea
+        class="form-control"
+        id="content"
+        name="content"
+        rows="6"
+        placeholder="내용을 입력하세요"
+      ></textarea>
     </div>
 
     <div class="form-group">
       <label for="image">이미지 첨부</label>
-      <input type="file" class="form-control-file" id="image" />
+      <input
+        type="file"
+        class="form-control-file"
+        id="image"
+        name="image"
+        multiple
+        accept="image/*"
+        onchange="validateFileCount()"
+      />
+      <small id="fileHelp" class="form-text text-muted"
+        >최대 5개 이미지 첨부 가능합니다.</small
+      >
     </div>
-
     <button type="submit" class="btn btn-success">제출하기</button>
   </form>
 </div>
+
+<script>
+  function validateFileCount() {
+    var input = document.getElementById("image");
+    if (input.files.length > 5) {
+      alert("최대 5개 이미지만 첨부 가능합니다.");
+      input.value = "";
+      return false;
+    }
+    return true;
+  }
+</script>
 {% endblock %}

@@ -287,4 +287,4 @@ def write():
        
         return redirect(url_for("articles.index"))
            
-    return render_template("write.html")
+    return render_template("article_write.html")
