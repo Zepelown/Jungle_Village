@@ -131,7 +131,7 @@ def sign_in():
 
     if result:
         token = jwt.encode(
-            {"email": email, "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=10)},
+            {"email": email, "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=15)},
             SECRET_KEY,
             algorithm="HS256"
         )
@@ -204,5 +204,27 @@ def check_nickname():
 
 @bp.route("/mypage")
 def mypage():
-    return render_template("mypage.html")
+    token = request.cookies.get("jwt")
+
+    if token and verify_token(token):
+        return render_template("mypage.html")
+    else:
+        return redirect(url_for("auth.log_in"))
+    
+
+@bp.route("/set_nickname", methods=['POST'])
+def set_nickname():
+    user_email = request.form['user_email']
+    new_nickname = request.form['new_nickname']
+    db.users.update_one({"email": user_email}, {"$set": {"nickname": new_nickname}})
+
+    return jsonify({"message": "닉네임 변경 성공"})
+
+@bp.route("/set_password", methods=['POST'])
+def set_password():
+    user_email = request.form['user_email']
+    new_password = request.form['new_password']
+    db.users.update_one({"email": user_email}, {"$set": {"password": new_password}})
+    
+    return jsonify({"message": "닉네임 변경 성공"})
 
