@@ -164,3 +164,8 @@ def check_nickname():
     else:
         response = jsonify({"message": "사용 가능 닉네임입니다.", "check": "true"})
         return response
+
+@bp.route("/mypage")
+def mypage():
+    return render_template("mypage.html")
+

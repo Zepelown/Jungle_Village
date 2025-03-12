@@ -240,6 +240,3 @@ def delete_comment():
         return jsonify({"error": str(e)}), 500
 
 
-@bp.route("/mypage")
-def mypage():
-    return render_template("mypage.html")
