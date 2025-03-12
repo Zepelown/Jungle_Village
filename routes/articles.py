@@ -321,7 +321,7 @@ def write():
         user_data = get_user_data_by_token()
         user_id = user_data.get("_id")  # ObjectId 문자열
         kst = pytz.timezone("Asia/Seoul")  # 한국 시간대 설정
-        kst_now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(kst)  # UTC → KST 변환
+        kst_now = datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(kst)  # UTC → KST 변환
 
         formatted_time = kst_now.strftime("%Y-%m-%d %H:%M")  # 원하는 형식으로 변환
         date = formatted_time
