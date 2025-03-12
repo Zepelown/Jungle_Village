@@ -160,10 +160,10 @@ def complete_sign_up():
 
     return jsonify({'result': "success"})
 
-@bp.route("/log_out", methods=["POST"])
+@bp.route("/log_out", methods=["GET"])
 def log_out():
-    response = jsonify({"message": "로그아웃 성공"})
-    response.set_cookie("jwt", "", expires=0)  
+    response = redirect(url_for("auth.log_in"))  # 로그인 페이지로 리다이렉트
+    response.set_cookie("jwt", "", expires=0, max_age=0, path='/')  # 쿠키 삭제
     return response
 
 @bp.route("/find_pw")

@@ -37,6 +37,20 @@
         $(document).ready(function () {
             load_user_and_setting();
         });
+
+        function logout(){
+            $.ajax({
+                url: "/auth/log_out",
+                method: "POST",
+                contentType: "application/json",
+                success: function (response) {
+                    alert("로그아웃을 성공했습니다.")
+                },
+                error: function (xhr) {
+                    alert("로그아웃을 실패했습니다: " + xhr.responseJSON.error);
+                }
+            })
+        }
     </script>
 
     {% block script %}
@@ -89,7 +103,9 @@
                     <p class="nickname"></p>
 
                     <div class="container d-flex flex-column align-items-center w-100">
-                        <button type="button" class="btn btn-outline-secondary mb-2 w-60">로그아웃</button>
+                        <button type="button" class="btn btn-outline-secondary mb-2 w-60"
+                            data-url="{{ url_for('auth.log_out') }}"
+                            onclick="window.location.href=this.getAttribute('data-url');">로그아웃</button>
                         <button type="button" class="btn btn-outline-primary w-60 mt-3"
                             data-url="{{ url_for('articles.write') }}"
                             onclick="window.location.href=this.getAttribute('data-url');">글쓰기</button>
