@@ -1,15 +1,107 @@
-{% extends "base_main.html" %}
-
-{% block title %}마이페이지{% endblock %}
-
-{% block extra_css %}
+{% extends "base_main.html" %} {% block title %}마이페이지{% endblock %} {%
+block extra_css %}
 <link
-rel="stylesheet"
-href="{{ url_for('static', filename='css/mypage.css') }}"
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/mypage.css') }}"
 />
-{% endblock %}
+{% endblock %} {% block script %}
+<script>
+  function set_nickname() {
+    let nickname = $("#nickname_input").val();
+    if (!nickname) {
+      alert("닉네임을 입력해주세요!");
+      return;
+    }
 
-{% block content %}
+    $.ajax({
+      type: "POST",
+      url: "/auth/check_nickname",
+      data: { user_nickname: nickname },
+      success: function (response) {
+        if (response["check"] === "false") {
+          alert("중복닉네임 입니다.");
+          return;
+        }
+
+        $.ajax({
+          url: "/auth/find_user_by_token",
+          method: "GET",
+          success: function (response) {
+            $.ajax({
+              type: "POST",
+              url: "/auth/set_nickname",
+              async: false,
+              data: { user_email: response["email"], new_nickname: nickname },
+              success: function (res) {
+                alert("닉네임 변경 성공!");
+              },
+            });
+          },
+          error: function (xhr) {
+            alert(
+              "닉네임을 가져오는 데 실패했습니다: " + xhr.responseJSON.error
+            );
+          },
+        });
+      },
+    });
+  }
+
+  function set_password(event) {
+    event.preventDefault();
+    let password = $("#password_input").val();
+    if (!password) {
+      alert("비밀번호를 입력해주세요!");
+      return;
+    }
+
+    $.ajax({
+      url: "/auth/find_user_by_token",
+      method: "GET",
+      success: function (response) {
+        $.ajax({
+          type: "POST",
+          url: "/auth/set_password",
+          data: { user_email: response["email"], new_password: password },
+          success: function (res) {
+            alert("비밀번호 변경 성공!");
+          },
+        });
+      },
+      error: function (xhr) {
+        alert("비밀번호를 가져오는 데 실패했습니다: " + xhr.responseJSON.error);
+      },
+    });
+  }
+
+  function changeProfileImage(event) {
+    event.preventDefault();
+    let file = $("#profile_image_input")[0].files[0];
+    if (!file) {
+      alert("이미지를 선택해주세요");
+      return;
+    }
+
+    let formData = new FormData();
+    formData.append("profile_image", file);
+
+    $.ajax({
+      url: "/auth/update_profile_image",
+      method: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function (response) {
+        alert("프로필 사진이 변경되었습니다.");
+        $("img[alt='프로필 이미지']").attr("src", response.profile_image);
+      },
+      error: function (xhr) {
+        alert("프로필 사진 변경에 실패했습니다: " + xhr.responseJSON.message);
+      },
+    });
+  }
+</script>
+{% endblock %} {% block content %}
 <div class="wrap">
   <div class="container">
     <div class="right-section" id="writeForm">
@@ -21,22 +113,49 @@ href="{{ url_for('static', filename='css/mypage.css') }}"
       </div>
 
       <div class="text-center mt-3">
-        <button id="btnChangeProfile" class="btn2 btn btn-secondary">
-          사진 변경
+        <input
+          type="file"
+          id="profile_image_input"
+          accept="image/*"
+          class="form-control mb-2"
+        />
+        <button
+          type="button"
+          class="btn btn-primary"
+          onclick="changeProfileImage()"
+        >
+          사진변경
         </button>
       </div>
 
       <form class="mt-4">
         <div class="form-group">
-          <label for="nicknameInput">닉네임</label>
+          <label for="nickname_input">닉네임</label>
           <input
             type="text"
             class="form-control"
-            id="nicknameInput"
+            id="nickname_input"
             placeholder="닉네임을 입력하세요."
           />
         </div>
-        <button type="submit" class="btn btn-success">제출하기</button>
+        <button type="submit" class="btn btn-success" onclick="set_nickname()">
+          닉네임 변경
+        </button>
+      </form>
+
+      <form class="mt-4">
+        <div class="form-group">
+          <label for="nickname_input">비밀번호</label>
+          <input
+            type="text"
+            class="form-control"
+            id="password_input"
+            placeholder="비밀번호를 입력하세요."
+          />
+        </div>
+        <button type="submit" class="btn btn-success" onclick="set_password()">
+          비밀번호 변경
+        </button>
       </form>
     </div>
   </div>
