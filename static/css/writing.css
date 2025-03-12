@@ -13,6 +13,7 @@
 
 .container {
   display: flex;
+  max-width: 900px; /* 최대 너비 */
   justify-content: space-between;
   align-items: flex-start;
   margin-top: 10px;
@@ -44,22 +45,30 @@
   width: 100px;
 }
 .btn-group-vertical .btn {
-  background-color: transparent;
-  color: #333;
   font-weight: bold;
-  border: none;
-}
-.btn-group-vertical .btn:active,
-.btn-group-vertical .btn:focus {
-  background-color: #8c8c8c;
-  color: #fff;
+  border-radius: 10px; /* 원하는 둥근 정도로 설정 */
 }
 
 .right-section {
-  flex: 1;
   margin-left: 20px;
   padding: 20px;
+  display: flex;
+  width: 700px;
   border: 1px solid gray;
   border-radius: 10px;
   background-color: #f9f9f9;
+}
+
+.form {
+  width: 100%;
+}
+
+.form-group {
+  width: 100%;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
 }

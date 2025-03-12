@@ -5,7 +5,7 @@ from flask_pymongo import PyMongo
 
 # 애플리케이션 초기화
 
-load_dotenv()
+load_dotenv(override=True)
 
 app = Flask(__name__)
 

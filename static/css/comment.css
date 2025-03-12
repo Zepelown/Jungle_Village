@@ -1,0 +1,58 @@
+/* writing.css */
+.article-container {
+    background-color: #fff;
+    border-radius: 15px;
+}
+
+.article-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #343a40;
+}
+
+.article-meta {
+    font-size: 0.9rem;
+}
+
+.article-content {
+    font-size: 1rem;
+    color: #495057;
+}
+
+.comment-profile, .reply-profile {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+
+.comment, .reply {
+    background-color: #f8f9fa;
+}
+
+.comment:hover, .reply:hover {
+    background-color: #e2e6ea;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.replies {
+    padding-left: 20px;
+}
+
+.reply-toggle {
+    white-space: nowrap;
+    font-size: 0.9rem;
+}
+
+.reply-input {
+    border: 1px solid #ddd;
+    transition: all 0.3s ease-in-out;
+}
+
+.reply-input textarea {
+    resize: none;
+    border-radius: 5px;
+}
+
