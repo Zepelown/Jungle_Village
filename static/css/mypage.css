@@ -1,65 +1,82 @@
-* {
-  font-family: "Stylish", sans-serif;
-}
-.wrap {
-  margin: 10px auto;
-  padding: 10px;
-}
-
-.back {
-  width: 3%;
-  height: 3%;
-}
-
-.container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-top: 10px;
-}
-
-.profile-container {
-  width: 200px;
+/* 전체 페이지 중앙 정렬 */
+.right-section {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  min-height: 80vh; /* 화면 중앙 정렬 */
   text-align: center;
 }
 
-.profile img {
-  width: 120px;
-  height: 120px;
+/* 프로필 이미지 컨테이너 */
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* 프로필 이미지 */
+#profile_preview {
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
-  border: 2px solid gray;
+  object-fit: cover;
+  border: 3px solid #ddd;
+  margin-bottom: 10px;
 }
 
-.nickname {
+/* 파일 입력 버튼 숨기기 */
+#profile_image_input {
+  display: none;
+}
+
+/* 사용자 정의 파일 선택 버튼 */
+.custom-file-upload {
+  display: inline-block;
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.custom-file-upload:hover {
+  background-color: #0056b3;
+}
+
+/* 입력 폼 스타일 */
+.form-group {
+  width: 100%;
+  max-width: 300px;
+  margin: 10px auto;
+  text-align: left;
+}
+
+/* 버튼 스타일 */
+.btn {
+  width: 100%;
+  max-width: 300px;
   margin-top: 10px;
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
 }
 
-.btn-group-vertical {
-  width: 100px;
-}
-.btn-group-vertical .btn {
-  background-color: transparent;
-  color: #333;
-  font-weight: bold;
-  border: none;
-}
-.btn-group-vertical .btn:active,
-.btn-group-vertical .btn:focus {
-  background-color: #8c8c8c;
-  color: #fff;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 가로 중앙 정렬 */
+  justify-content: center; /* 세로 중앙 정렬 */
+  width: 100%;
+  max-width: 300px; /* 입력 필드 크기 제한 */
+  margin: 0 auto; /* 가운데 정렬 */
+  text-align: center;
 }
 
-.right-section {
-  flex: 1;
-  margin-left: 20px;
-  padding: 20px;
-  border: 1px solid gray;
-  border-radius: 10px;
-  background-color: #f9f9f9;
+#nickname_input {
+  text-align: center;
+}
+
+#password_input {
+  text-align: center;
 }
