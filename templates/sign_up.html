@@ -68,9 +68,21 @@
     />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        function validatePassword(password) {
-            const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d\W]{4,12}$/;
+        function validate_password(password) {
+            const regex = /^[a-z\d]{4,12}$/; 
             return regex.test(password);
+        }
+
+        function check_password(){
+            let password = $('#user_password').val();
+            if(validate_password(password)){
+                $('#checkbox_password').text("✅");
+                alert('사용가능 비밀번호!');
+            }
+            else{
+                $('#checkbox_password').text("❌");
+                alert('영어소문자와 숫자의 조합으로 4~12자로 설정해주세요.');
+            }
         }
 
         function get_otp(){
@@ -186,8 +198,9 @@
             let check1 = $('#checkbox_email').text();
             let check2 = $('#checkbox_nickname').text();
             let check3 = $('#checkbox_otp').text();
+            let check4 = $('#checkbox_password').text();
 
-            if(check1 === "❌" || check2 === "❌" || check3 === "❌"){
+            if(check1 === "❌" || check2 === "❌" || check3 === "❌" || check4 === "❌"){
                 alert('중복 이메일 또는 중복 닉네임 또는 인증실패 입니다.');
                 return;
             }
@@ -229,9 +242,9 @@
                       <input class="input_size" id="user_email" type="text"><span id="checkbox_email">❌</span>
                     </p>
                 </div>
-                <p class="header_font">비밀번호</p>
+                <p class="header_font">비밀번호 <button class="btn btn-link" onclick="check_password()">valid check</button></p>
                 <p>
-                    <input class="input_size" id="user_password" type="password">
+                    <input class="input_size" id="user_password" type="password"><span id="checkbox_password">❌</span>
                     <button class="toggle_button" onclick="toggle_password()">👁️</button>
                 </p>
                 <p class="header_font"><span>닉네임</span><button class="btn btn-link" onclick="check_nickname()">중복확인</button></p>
