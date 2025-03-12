@@ -4,7 +4,29 @@
         <meta charset="UTF-8">
     <title>QnA</title>
     <script>
-        
+        function send_question(){
+            let contact = $("#contact_email").val();
+            let title = $("#question_title").val();
+            let content = $("#question_content").val();
+            let tag = "[Village]";
+
+            if(!contact || !title || !content){
+                alert('비어있는 제출은 불가능합니다.');
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/send_question",
+                data: {user_contact: contact, question_title: title, question_content: content,
+                    msg_tag: tag
+                },
+                success: function(response){
+                    
+                }
+            })
+
+        }
     </script>
     <style>
         .main_panel{
@@ -21,41 +43,28 @@
     </head>
     <body>
         <div class="main_panel">
-            <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon1">@</span>
-                <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
-              </div>
-              
-              <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
-                <span class="input-group-text" id="basic-addon2">@example.com</span>
-              </div>
-              
               <div class="mb-3">
-                <label for="basic-url" class="form-label">Your vanity URL</label>
                 <div class="input-group">
-                  <span class="input-group-text" id="basic-addon3">https://example.com/users/</span>
-                  <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4">
+                  <span class="input-group-text" id="basic-addon3">Contact Email</span>
+                  <input type="text" class="form-control" id="contact_email" aria-describedby="basic-addon3 basic-addon4">
                 </div>
-                <div class="form-text" id="basic-addon4">Example help text goes outside the input group.</div>
               </div>
               
               <div class="input-group mb-3">
-                <span class="input-group-text">$</span>
-                <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
-                <span class="input-group-text">.00</span>
+                <span class="input-group-text">Title</span>
+                <input type="text" id="question_title" class="form-control" aria-label="Amount (to the nearest dollar)">
               </div>
               
-              <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Username" aria-label="Username">
-                <span class="input-group-text">@</span>
-                <input type="text" class="form-control" placeholder="Server" aria-label="Server">
-              </div>
               
               <div class="input-group">
-                <span class="input-group-text">With textarea</span>
-                <textarea class="form-control" aria-label="With textarea"></textarea>
+                <span class="input-group-text">Content</span>
+                <textarea class="form-control" id="question_content" aria-label="With textarea"></textarea>
               </div>
+
+              <div class="submit_question">
+                <button class="btn btn-link" onclick="send_question()">submit</button>
+              </div>
+
         </div>
     </body>
 </html>

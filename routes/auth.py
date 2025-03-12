@@ -81,6 +81,19 @@ def main():
     else:
         return redirect(url_for("auth.log_in"))
 
+@bp.route("/find_user_by_token", methods=['GET', 'POST'])
+def find_user_by_token():
+    token = request.cookies.get("jwt")
+
+    if token and verify_token(token):
+        result = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        email = result.get("email")
+        user = db.users.find_one({"email" : email }, {"_id": 0, "password": 0})
+        return jsonify(user)
+    else:
+        return jsonify({'error':"Can't find User"})
+    
+
 @bp.route("/log_in")
 def log_in():
     return render_template("sign_in.html")
@@ -94,7 +107,7 @@ def sign_in():
 
     if result:
         token = jwt.encode(
-            {"email": email, "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=1)},
+            {"email": email, "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=10)},
             SECRET_KEY,
             algorithm="HS256"
         )
