@@ -33,6 +33,26 @@ def verify_token(token):
 def load_qna():
     return render_template("qna.html")
 
+@bp.route("/send_question", methods=["POST"])
+def send_question():
+    contact = request.form['user_contact']
+    title = request.form['question_title']
+    content = request.form['question_content']
+    tag = request.form['msg_tag']
+
+    msg_title = tag + ' ' + title
+    msg_body = content + '\nContact: ' + contact
+
+
+    msg = Message(msg_title, sender='jungle.8.306.5@gmail.com', recipients=['jungle.8.306.5@gmail.com'])
+    msg.body = msg_body
+
+    try:
+        mail.send(msg)
+        return jsonify({"success": True, "message": "Email sent successfully!"})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
 @bp.route("/send_otp", methods=['POST'])
 def send_otp():
     email = request.form['user_email']
@@ -81,6 +101,19 @@ def main():
     else:
         return redirect(url_for("auth.log_in"))
 
+@bp.route("/find_user_by_token", methods=['GET', 'POST'])
+def find_user_by_token():
+    token = request.cookies.get("jwt")
+
+    if token and verify_token(token):
+        result = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        email = result.get("email")
+        user = db.users.find_one({"email" : email }, {"_id": 0, "password": 0})
+        return jsonify(user)
+    else:
+        return jsonify({'error':"Can't find User"})
+    
+
 @bp.route("/log_in")
 def log_in():
     return render_template("sign_in.html")
@@ -94,7 +127,7 @@ def sign_in():
 
     if result:
         token = jwt.encode(
-            {"email": email, "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
+            {"email": email, "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=10)},
             SECRET_KEY,
             algorithm="HS256"
         )
