@@ -323,6 +323,12 @@ def write():
 @bp.route("/edit/<article_id>", methods=["GET"])
 def edit_get(article_id):
     article = articles_collection.find_one({"_id": ObjectId(article_id)})
+    
+    user_data = get_user_data_by_token()
+    user_id = user_data.get("_id")  # ObjectId 문자열
+    if user_id != article.get("user_id"):
+        flash("이 글은 사용자가 작성한 것이 아닙니다.", "error")
+        return redirect(url_for("articles.article_detail", article_id=article["_id"]))
 
     if not article:
         flash("해당 글을 찾지 못하였습니다.", "error")
@@ -372,4 +378,4 @@ def edit_post(article_id):
         }
     )
     
-    return redirect(url_for("articles.index"))
+    return redirect(url_for("articles.article_detail",article_id=article_id))

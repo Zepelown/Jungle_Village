@@ -15,7 +15,7 @@ app.config['MONGO_URI'] = MONGO_URI
 mongo = PyMongo(app)
 
 SECRET_KEY = 'jungle_village_secret_key'
-
+app.secret_key = 'your_secret_key_here'
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True

@@ -1,10 +1,33 @@
-{% extends "base_main.html" %} {% block title %}글 수정 페이지{% endblock %} {%
-block extra_css %}
+{% extends "base_main.html" %} {% block title %}글 수정 페이지{% endblock %} 
+{%block extra_css %}
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/writing.css') }}"
 />
-{% endblock %} {% block content %}
+{% endblock %} 
+
+{% block script %}
+<script>
+  function showPreview(event, index) {
+    const previewDiv = document.getElementById("preview" + index);
+    const file = event.target.files[0];
+
+    if (previewDiv) {
+      previewDiv.innerHTML = '';
+    }
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        previewDiv.innerHTML = '<img src="' + e.target.result + '" width="100" />';
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+</script>
+{% endblock %} 
+
+{% block content %}
 <div class="right-section" id="writeForm">
   <form method="POST" enctype="multipart/form-data" class="form">
     <div class="form-group">
@@ -62,24 +85,5 @@ block extra_css %}
     </div>
   </form>
 </div>
-
-<script>
-  function showPreview(event, index) {
-    const previewDiv = document.getElementById("preview" + index);
-    const file = event.target.files[0];
-
-    if (previewDiv) {
-      previewDiv.innerHTML = '';
-    }
-
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        previewDiv.innerHTML = '<img src="' + e.target.result + '" width="100" />';
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-</script>
 
 {% endblock %}

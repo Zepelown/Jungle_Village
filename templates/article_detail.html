@@ -126,10 +126,10 @@
         });
 
         $(".reply-delete-toggle").click(function () {
-            const commentDiv = $(this).closest(".comment"); 
+            const commentDiv = $(this).closest(".comment");
             const commentId = commentDiv.attr("data-comment-id");
-            const replyDiv = $(this).closest(".reply");  
-            const replyId = replyDiv.attr("data-reply-id"); 
+            const replyDiv = $(this).closest(".reply");
+            const replyId = replyDiv.attr("data-reply-id");
             $.ajax({
                 url: "/reply",
                 method: "DELETE",
@@ -151,17 +151,31 @@
 
 </script>
 
+
+
 {% endblock %}
 
 
 {% block content %}
 <div class="right-section flex-column">
     <div class="article-container p-4 mb-4 rounded-3">
-        <h3 class="article-title">
-            <a href="{{ url_for('articles.article_detail', article_id=article['_id']) }}" class="text-decoration-none">
-                {{ article['title'] }}
-            </a>
-        </h3>
+        <div class="d-flex justify-content-between align-items-end">
+            <h3 class="article-title m-0">
+                <a href="{{ url_for('articles.article_detail', article_id=article['_id']) }}"
+                    class="text-decoration-none fw-bold text-dark">
+                    {{ article['title'] }}
+                </a>
+            </h3>
+            <p class="edit-article m-0 ms-3 text-primary fw-semibold" role="button">
+                <a href="{{ url_for('articles.edit_get', article_id=article['_id']) }}"
+                    class="">
+                    수정하기
+                </a>
+
+
+            </p>
+        </div>
+
         <div class="article-meta mb-3 text-muted">
             <span>작성자 | {{ writer['generation'] }}기 {{ writer['nickname'] }}</span>
             <span class="mx-2">|</span>
@@ -199,8 +213,7 @@
                         <div>
                             <strong>{{ comment['user_info']['generation'] }}기 {{ comment['user_info']['nickname']
                                 }}</strong>
-                            <button class="reply-btn reply-toggle ml-1"
-                                data-comment-id="{{ comment['_id'] }}">
+                            <button class="reply-btn reply-toggle ml-1" data-comment-id="{{ comment['_id'] }}">
                                 답글 쓰기
                             </button>
                             <button class="delete-btn comment-delete-toggle ml-1">삭제</button>
@@ -218,7 +231,8 @@
                             alt="Reply Image">
                         <div class="ml-1">
                             <div>
-                                <strong>{{ reply['user_info']['generation'] }}기 {{ reply['user_info']['nickname']}}</strong>
+                                <strong>{{ reply['user_info']['generation'] }}기 {{
+                                    reply['user_info']['nickname']}}</strong>
                                 <button class="delete-btn reply-delete-toggle ml-1">삭제</button>
                             </div>
                             <p class="reply-text mt-2">{{ reply['content'] }}</p>
@@ -232,8 +246,8 @@
                 <div class="reply-input mt-3 ms-5 p-2 bg-white rounded shadow-sm d-none"
                     id="reply-input-{{ comment['_id'] }}">
                     <div class="d-flex align-items-start">
-                        <img src="{{ writer['profile_image'] }}" class="rounded-circle me-2" alt="Profile Image" width="50"
-                        height="50">
+                        <img src="{{ writer['profile_image'] }}" class="rounded-circle me-2" alt="Profile Image"
+                            width="50" height="50">
                         <textarea class="form-control" rows="2" placeholder="답글을 입력하세요..."></textarea>
                         <div class="d-flex justify-content-end mt-2">
                             <button class="btn btn-sm btn-outline-secondary reply-cancel">취소</button>
@@ -241,7 +255,7 @@
                         </div>
 
                     </div>
-  
+
                 </div>
             </div>
             {% endfor %}

@@ -57,10 +57,17 @@
             </a>
         </nav>
 
-        <!-- Flash messages -->
-        {% for message in get_flashed_messages(with_categories=true) %}
-        <p class="{{ message[0] }}">{{ message[1] }}</p>
-        {% endfor %}
+        {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <div class="alert-container">
+                {% for category, message in messages %}
+                    <script>
+                        alert("{{ message }}");
+                    </script>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
 
         <!-- Content Block -->
         <div class="content">
