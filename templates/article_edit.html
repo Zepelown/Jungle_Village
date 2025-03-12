@@ -1,0 +1,85 @@
+{% extends "base_main.html" %} {% block title %}글 수정 페이지{% endblock %} {%
+block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/writing.css') }}"
+/>
+{% endblock %} {% block content %}
+<div class="right-section" id="writeForm">
+  <form method="POST" enctype="multipart/form-data" class="form">
+    <div class="form-group">
+      <label for="category">카테고리 선택</label>
+      <select class="form-control" id="category" name="category">
+        <option {% if article.category == '개발' %}selected{% endif %}>개발</option>
+        <option {% if article.category == '일상' %}selected{% endif %}>일상</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <input
+        type="text"
+        class="form-control"
+        id="title"
+        name="title"
+        value="{{ article.title }}"
+        placeholder="제목을 입력하세요"
+      />
+    </div>
+
+    <div class="form-group">
+      <textarea
+        class="form-control"
+        id="content"
+        name="content"
+        rows="6"
+        placeholder="내용을 입력하세요">{{ article.content }}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="image">이미지 첨부 (최대 5개만)</label>
+      {% for i in range(5) %}
+      <div class="image-upload-field">
+        {% if existing_images[i] %}
+          <div class="existing-image" id="preview{{ i }}">
+            <span>{{ existing_images[i] }}</span>
+          </div>
+        {% endif %}
+        <input
+          type="file"
+          class="form-control-file"
+          id="image{{ i }}"
+          name="image{{ i }}"
+          accept="image/*"
+          {% if not existing_images[i] %} placeholder="새 이미지 선택" {% endif %}
+          onchange="showPreview(event, '{{ i }}')"
+        />
+      </div>
+    {% endfor %}
+    </div>
+
+    <div class="form-group text-center">
+      <button type="submit" class="btn btn-success">수정 완료</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  function showPreview(event, index) {
+    const previewDiv = document.getElementById("preview" + index);
+    const file = event.target.files[0];
+
+    if (previewDiv) {
+      previewDiv.innerHTML = '';
+    }
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        previewDiv.innerHTML = '<img src="' + e.target.result + '" width="100" />';
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+</script>
+
+{% endblock %}

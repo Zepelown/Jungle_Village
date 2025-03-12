@@ -282,9 +282,6 @@ def write():
         user_id = user_data.get("_id")  # ObjectId 문자열
         date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
 
-        image_files = request.files.getlist('image')
-        image_paths = []
-
         #먼저 데이터 저장
         article_data = {
             "title": title,
@@ -292,29 +289,87 @@ def write():
             "user_id": user_id,
             "date": date,
             "category": category,
-            "images": image_paths  #빈 리스트
+            "images": []  #빈 리스트
         }
 
         result = articles_collection.insert_one(article_data)
+        article_id = str(result.inserted_id)
 
-        if result:
-            article_id = result.inserted_id
-            user_folder = os.path.join(UPLOAD_FOLDER, user_id)
-            os.makedirs(user_folder, exist_ok=True)
+        article_folder = os.path.join(UPLOAD_FOLDER, article_id)
+        os.makedirs(article_folder, exist_ok=True)
 
-            for idx, image_file in enumerate(image_files):
-                if image_file and allowed_file(image_file.filename):
-                    filename = f"image{idx + 1}.{image_file.filename.rsplit('.', 1)[1].lower()}"
-                    filepath = os.path.join(user_folder, filename)
-                    image_file.save(filepath)
+        image_paths=[]
+        for i in range(5):
+            image_file = request.files.get(f"image{i}")
+            if image_file and allowed_file(image_file.filename):  
+                ext = image_file.filename.rsplit('.', 1)[1].lower() 
+                filename = f"image{i + 1}.{ext}"
+                filepath = os.path.join(article_folder, filename)
+                image_file.save(filepath)
 
-                    image_paths.append(f"/static/article_image/{article_id}/{filename}")
-       
-        articles_collection.update_one(
-            {"_id": article_id},
-            {"$set": {"images": image_paths}}
-        )
+                image_paths.append(f"/static/article_image/{article_id}/{filename}")
+        
+        if image_paths:
+            articles_collection.update_one(
+                {"_id": result.inserted_id},
+                {"$set": {"images": image_paths}}
+            )
        
         return redirect(url_for("articles.index"))
            
-    return render_template("write.html")
+    return render_template("article_write.html")
+
+#수정할 글 불러와서 수정 페이지 보여주기
+@bp.route("/edit/<article_id>", methods=["GET"])
+def edit_get(article_id):
+    article = articles_collection.find_one({"_id": ObjectId(article_id)})
+
+    if not article:
+        flash("해당 글을 찾지 못하였습니다.", "error")
+        return redirect(url_for("articles.index"))
+    
+    existing_images = article.get("images", [])
+    return render_template("article_edit.html", article=article, existing_images=existing_images)
+
+#수정한 글 정보들을 받아서 다시 db에 업데이트
+@bp.route("/edit/<article_id>", methods=["POST"])
+def edit_post(article_id):
+    category = request.form.get("category")
+    title = request.form.get("title")
+    content = request.form.get("content")
+
+    image_files = [request.files.get(f'image{i}') for i in range(5)]
+    image_paths = []
+
+    article = articles_collection.find_one({"_id": ObjectId(article_id)})
+    existing_images = article.get("images", [])
+
+    for i, image_file in enumerate(image_files):
+        if image_file and allowed_file(image_file.filename):
+            filename = f"image{article_id}_{i + 1}.{image_file.filename.rsplit('.', 1)[1].lower()}"
+            filepath = os.path.join(UPLOAD_FOLDER, str(article_id), filename)
+            image_file.save(filepath)
+            image_paths.append(f"/static/article_image/{article_id}/{filename}")
+
+            # 새 이미지로 변경하게 되면 기존 이미지는 삭제
+            if i < len(existing_images):
+                old_image_path = os.path.join(UPLOAD_FOLDER, str(article_id), existing_images[i].split('/')[-1])
+                if os.path.exists(old_image_path):
+                    os.remove(old_image_path)
+    
+    if not any(image_paths):
+        image_paths = existing_images
+    
+    articles_collection.update_one(
+        {"_id": ObjectId(article_id)}, 
+        {"$set": {
+            "category": category,
+            "title": title, 
+            "content": content,
+            "date": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "images": image_paths
+            }
+        }
+    )
+    
+    return redirect(url_for("articles.index"))
