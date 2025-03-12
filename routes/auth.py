@@ -171,7 +171,7 @@ def sign_in():
 
     kst = pytz.timezone("Asia/Seoul")
     kst_now = datetime.datetime.now(kst)  # 현재 KST 시간
-    expires_at = kst_now + datetime.timedelta(minutes=1)
+    expires_at = kst_now + datetime.timedelta(minutes=30)
 
     if result:
         token = jwt.encode(
