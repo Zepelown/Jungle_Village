@@ -411,7 +411,7 @@ def edit_post(article_id):
             "category": category,
             "title": title, 
             "content": content,
-            "date": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "date": datetime.utcnow().strftime("%Y-%m-%d %H:%M"),
             "images": image_paths
             }
         }
