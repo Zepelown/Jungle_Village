@@ -231,11 +231,17 @@
                 <!-- 숨겨진 답글 입력창 -->
                 <div class="reply-input mt-3 ms-5 p-2 bg-white rounded shadow-sm d-none"
                     id="reply-input-{{ comment['_id'] }}">
-                    <textarea class="form-control" rows="2" placeholder="답글을 입력하세요..."></textarea>
-                    <div class="d-flex justify-content-end mt-2">
-                        <button class="btn btn-sm btn-outline-secondary reply-cancel">취소</button>
-                        <button class="btn btn-sm btn-primary ms-2 reply-submit">답글 작성</button>
+                    <div class="d-flex align-items-start">
+                        <img src="{{ writer['profile_image'] }}" class="rounded-circle me-2" alt="Profile Image" width="50"
+                        height="50">
+                        <textarea class="form-control" rows="2" placeholder="답글을 입력하세요..."></textarea>
+                        <div class="d-flex justify-content-end mt-2">
+                            <button class="btn btn-sm btn-outline-secondary reply-cancel">취소</button>
+                            <button class="btn btn-sm btn-primary ms-2 reply-submit">답글 작성</button>
+                        </div>
+
                     </div>
+  
                 </div>
             </div>
             {% endfor %}
@@ -246,7 +252,7 @@
     <div class="comment-write-section p-3 rounded shadow-sm bg-light" data-article-id="{{article['_id']}}">
         <div class="d-flex align-items-start">
             <!-- 프로필 이미지 -->
-            <img src="{{ user['profile_image'] }}" class="rounded-circle me-2" alt="Profile Image" width="50"
+            <img src="{{ writer['profile_image'] }}" class="rounded-circle me-2" alt="Profile Image" width="50"
                 height="50">
 
             <!-- 입력 필드 -->
