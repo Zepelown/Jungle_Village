@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -23,3 +24,53 @@
     <button onclick="log_out()">로그아웃</button>
 </body>
 </html>
+
+
+
+{% extends "base_main.html" %}
+
+{% block title %}홈{% endblock %}
+
+
+{% block extra_css %}
+<link
+rel="stylesheet"
+href="{{ url_for('static', filename='css/writing.css') }}"
+/>
+{% endblock %}
+
+{% block content %}
+<div class="right-section row">
+    {% for article in articles %}
+    <div class="card mb-4">
+        <div class="card-body ">
+            <h5 class="card-title">
+                <a href="{{ url_for('articles.article_detail', article_id=article['_id']) }}"
+                    class="text-decoration-none">
+                    {{ article['title'] }}
+                </a>
+            </h5>
+            <p class="card-subtitle mb-2 text-body-secondary">
+                작성자 | {{ article['user']['generation'] }}기 {{ article['user']['nickname'] }}
+                <span style="margin-right: 10px;"></span>
+                작성일자 | {{ article['date'] }}
+            </p>
+            <p class="card-text"> {{ article['content'] }} </p>
+            {% if article['images'] %}
+            <div class="card-img-bottom">
+                <div class="d-flex justify-content-start">
+                    {% for image in article['images'] %}
+                    <img src="{{ image }}" class="img-fluid me-2" alt="Article Image"
+                        style="width: 100%; height: auto; object-fit: contain; max-height: 150px;">
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% else %}
+    <p>No articles found.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,221 @@
+{% extends "base_main.html" %}
+
+{% block title %}홈{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/writing.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/comment.css') }}" />
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        $(".reply-toggle").click(function () {
+            const replyInput = $(this).closest(".comment").find(".reply-input");
+            replyInput.toggleClass("d-none");
+        });
+
+        $(".reply-cancel").click(function () {
+            $(this).closest(".reply-input").addClass("d-none");
+        });
+
+        $(".reply-submit").click(function () {
+            const commentDiv = $(this).closest(".comment");  // .comment 요소를 찾아야 함
+            const commentId = commentDiv.attr("data-comment-id");  // .comment에서 data-comment-id 가져옴
+            const replyInput = commentDiv.find(".reply-input textarea");
+
+            console.log("전송되는 comment_id:", commentId);  // 🛠 디버깅 코드
+            console.log("전송되는 답글 내용:", replyInput);
+
+            if (!commentId) {
+                console.error("Error: 댓글 ID가 없음!");
+                alert("댓글 ID를 찾을 수 없습니다.");
+                return;
+            }
+
+            // input 요소가 제대로 선택되었는지 확인
+            if (!replyInput.length) {
+                console.error("Error: replyInput 요소를 찾을 수 없음!");
+                return;
+            }
+
+            const replyText = replyInput.val()?.trim(); // `?.`를 사용하여 undefi
+
+            if (replyText === "") {
+                alert("답글을 입력하세요!");
+                return;
+            }
+
+            $.ajax({
+                url: "/reply",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    comment_id: commentId,
+                    user_id: "67cfb44b8c8918f658c51832", // 실제 로그인된 사용자 ID로 변경 필요
+                    content: replyText
+                }),
+                success: function (response) {
+                    location.reload();
+                },
+                error: function (xhr) {
+                    alert("답글 작성에 실패했습니다: " + xhr.responseJSON.error);
+                }
+            });
+        });
+
+        $(".comment-sumbit").click(function () {
+            const commentDiv = $(this).closest(".comment-write-section");  // data-article-id
+            const article_id = commentDiv.attr("data-article-id");
+            const commentInput = commentDiv.find(".comment-input textarea");
+            console.log("전송되는 댓글 내용:", commentInput);
+
+            if (!article_id) {
+                console.error("Error: 댓글 ID가 없음!");
+                alert("댓글 ID를 찾을 수 없습니다.");
+                return;
+            }
+
+            // input 요소가 제대로 선택되었는지 확인
+            if (!commentInput.length) {
+                console.error("Error: commentInput 요소를 찾을 수 없음!");
+                return;
+            }
+
+            const commentText = commentInput.val()?.trim(); // `?.`를 사용하여 undefi
+
+            if (commentText === "") {
+                alert("댓글을 입력하세요!");
+                return;
+            }
+
+            $.ajax({
+                url: "/comment",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    user_id: "67cfb44b8c8918f658c51832", // 실제 로그인된 사용자 ID로 변경 필요
+                    article_id: article_id,
+                    content: commentText
+                }),
+                success: function (response) {
+                    location.reload();
+                },
+                error: function (xhr) {
+                    alert("답글 작성에 실패했습니다: " + xhr.responseJSON.error);
+                }
+            });
+        });
+    });
+
+</script>
+
+{% endblock %}
+
+
+{% block content %}
+<div class="right-section flex-column">
+    <div class="article-container p-4 mb-4 rounded-3">
+        <h3 class="article-title">
+            <a href="{{ url_for('articles.article_detail', article_id=article['_id']) }}" class="text-decoration-none">
+                {{ article['title'] }}
+            </a>
+        </h3>
+        <div class="article-meta mb-3 text-muted">
+            <span>작성자 | {{ user['generation'] }}기 {{ user['nickname'] }}</span>
+            <span class="mx-2">|</span>
+            <span>작성일자 | {{ article['date'] }}</span>
+        </div>
+        <p class="article-content">{{ article['content'] }}</p>
+
+        {% if article['images'] %}
+        <div class="article-images mb-4">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                {% for image in article['images'] %}
+                <div class="col">
+                    <div class="image-card rounded-3 overflow-hidden shadow-sm">
+                        <img src="{{ image }}" class="img-fluid" alt="Article Image"
+                            style="object-fit: cover; height: 250px;">
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- 댓글 섹션 -->
+    {% if comments %}
+    <div class="comments-section">
+        <h5 class="comments-title mb-3">댓글 ({{ total_comments }})</h5>
+        <div class="d-flex flex-column">
+            {% for comment in comments %}
+            <div class="comment mb-3 p-3 rounded-3 shadow-sm" data-comment-id="{{ comment['_id'] }}">
+                <div class="d-flex align-items-center bg-light p-2 rounded-2">
+                    <img src="{{ comment['user_info']['profile_image'] }}" class="comment-profile img-fluid me-3"
+                        alt="Commenter Image">
+                    <div class="ml-1 flex-grow-1">
+                        <div>
+                            <strong>{{ comment['user_info']['generation'] }}기 {{ comment['user_info']['nickname']
+                                }}</strong>
+                            <button class="btn btn-sm btn-outline-primary reply-toggle ml-1"
+                                data-comment-id="{{ comment['_id'] }}">
+                                답글 쓰기
+                            </button>
+                        </div>
+                        <p class="comment-text mt-2">{{ comment['content'] }}</p>
+                    </div>
+
+                </div>
+
+                <!-- 기존 대댓글 표시 -->
+                {% if comment['replies'] %}
+                <div class="replies mt-3 ms-5">
+                    {% for reply in comment['replies'] %}
+                    <div class="reply d-flex align-items-center bg-light p-2 mb-2 rounded-2">
+                        <img src="{{ reply['user_info']['profile_image'] }}" class="reply-profile img-fluid me-3"
+                            alt="Reply Image">
+                        <div class="ml-1">
+                            <strong>{{ reply['user_info']['generation'] }}기 {{ reply['user_info']['nickname']
+                                }}</strong>
+                            <p class="reply-text mt-2">{{ reply['content'] }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- 숨겨진 답글 입력창 -->
+                <div class="reply-input mt-3 ms-5 p-2 bg-white rounded shadow-sm d-none"
+                    id="reply-input-{{ comment['_id'] }}">
+                    <textarea class="form-control" rows="2" placeholder="답글을 입력하세요..."></textarea>
+                    <div class="d-flex justify-content-end mt-2">
+                        <button class="btn btn-sm btn-outline-secondary reply-cancel">취소</button>
+                        <button class="btn btn-sm btn-primary ms-2 reply-submit">답글 작성</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="comment-write-section p-3 rounded shadow-sm bg-light" data-article-id="{{article['_id']}}">
+        <div class="d-flex align-items-start">
+            <!-- 프로필 이미지 -->
+            <img src="{{ user['profile_image'] }}" class="rounded-circle me-2" alt="Profile Image" width="50"
+                height="50">
+
+            <!-- 입력 필드 -->
+            <div class="comment-input flex-grow-1 ml-1">
+                <textarea class="form-control" id="commentInput" rows="2" placeholder="댓글을 입력하세요..."></textarea>
+            </div>
+        </div>
+
+        <!-- 버튼 영역 -->
+        <div class="d-flex justify-content-end mt-2">
+            <button class="btn btn-primary comment-sumbit">댓글 작성</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

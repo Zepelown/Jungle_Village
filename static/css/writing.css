@@ -1,0 +1,74 @@
+* {
+  font-family: "Stylish", sans-serif;
+}
+.wrap {
+  margin: 10px auto;
+  padding: 10px;
+}
+
+.back {
+  width: 3%;
+  height: 3%;
+}
+
+.container {
+  display: flex;
+  max-width: 900px; /* 최대 너비 */
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 10px;
+}
+
+.profile-container {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.profile img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px solid gray;
+}
+
+.nickname {
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.btn-group-vertical {
+  width: 100px;
+}
+.btn-group-vertical .btn {
+  font-weight: bold;
+  border-radius: 10px; /* 원하는 둥근 정도로 설정 */
+}
+
+.right-section {
+  margin-left: 20px;
+  padding: 20px;
+  display: flex;
+  width: 700px;
+  border: 1px solid gray;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+}
+
+.form {
+  width: 100%;
+}
+
+.form-group {
+  width: 100%;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+}

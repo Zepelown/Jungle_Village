@@ -1,0 +1,44 @@
+{% extends "base_main.html" %}
+
+{% block title %}마이페이지{% endblock %}
+
+{% block extra_css %}
+<link
+rel="stylesheet"
+href="{{ url_for('static', filename='css/mypage.css') }}"
+/>
+{% endblock %}
+
+{% block content %}
+<div class="wrap">
+  <div class="container">
+    <div class="right-section" id="writeForm">
+      <div class="profile text-center">
+        <img
+          src="{{ profile_img if profile_img else '../static/default_img.png' }}"
+          class="profile-img"
+        />
+      </div>
+
+      <div class="text-center mt-3">
+        <button id="btnChangeProfile" class="btn2 btn btn-secondary">
+          사진 변경
+        </button>
+      </div>
+
+      <form class="mt-4">
+        <div class="form-group">
+          <label for="nicknameInput">닉네임</label>
+          <input
+            type="text"
+            class="form-control"
+            id="nicknameInput"
+            placeholder="닉네임을 입력하세요."
+          />
+        </div>
+        <button type="submit" class="btn btn-success">제출하기</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
