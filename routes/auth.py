@@ -8,7 +8,7 @@ import hashlib
 import requests
 import datetime
 import random
-
+import pytz
 
 bp = Blueprint("auth", __name__)
 
@@ -69,7 +69,10 @@ def send_otp():
         del otp_store[email]
 
     new_otp = generate_otp()
-    expires_at = datetime.datetime.utcnow() + datetime.timedelta(minutes=5)
+
+    kst = pytz.timezone("Asia/Seoul")
+    kst_now = datetime.datetime.now(kst)  # 현재 KST 시간
+    expires_at = kst_now + datetime.timedelta(minutes=5)
 
     otp_store[email] = {"otp": new_otp, "expires": expires_at}
 
@@ -92,7 +95,10 @@ def verify_otp():
 
     otp_data = otp_store[email]
 
-    if datetime.datetime.utcnow() > otp_data["expires"]:
+    kst = pytz.timezone("Asia/Seoul")
+    kst_now = datetime.datetime.now(kst)  # 현재 KST 시간
+
+    if kst_now > otp_data["expires"]:
         return jsonify({"message": "인증번호가 만료되었습니다.", "check": "false"})
 
     if user_otp == otp_data["otp"]:
@@ -143,11 +149,15 @@ def sign_in():
 
     result = user_from_db.find_one({"email": email, "password": pw})
 
+    kst = pytz.timezone("Asia/Seoul")
+    kst_now = datetime.datetime.now(kst)  # 현재 KST 시간
+    expires_at = kst_now + datetime.timedelta(minutes=1)
+
     if result:
         token = jwt.encode(
             {
                 "email": email,
-                "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=10),
+                "exp": expires_at,
             },
             SECRET_KEY,
             algorithm="HS256",
