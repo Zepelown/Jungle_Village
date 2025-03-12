@@ -192,18 +192,18 @@
         <div class="d-flex flex-column">
             {% for comment in comments %}
             <div class="comment mb-3 p-3 rounded-3 shadow-sm" data-comment-id="{{ comment['_id'] }}">
-                <div class="d-flex align-items-center bg-light p-2 rounded-2">
+                <div class="d-flex align-items-center  p-2 rounded-2">
                     <img src="{{ comment['user_info']['profile_image'] }}" class="comment-profile img-fluid me-3"
                         alt="Commenter Image">
                     <div class="ml-1 flex-grow-1">
                         <div>
                             <strong>{{ comment['user_info']['generation'] }}기 {{ comment['user_info']['nickname']
                                 }}</strong>
-                            <button class="btn btn-sm btn-outline-primary reply-toggle ml-1"
+                            <button class="reply-btn reply-toggle ml-1"
                                 data-comment-id="{{ comment['_id'] }}">
                                 답글 쓰기
                             </button>
-                            <button class="btn btn-outline-danger comment-delete-toggle ml-1">삭제</button>
+                            <button class="delete-btn comment-delete-toggle ml-1">삭제</button>
                         </div>
                         <p class="comment-text mt-2">{{ comment['content'] }}</p>
                     </div>
@@ -213,13 +213,13 @@
                 {% if comment['replies'] %}
                 <div class="replies mt-3 ms-5">
                     {% for reply in comment['replies'] %}
-                    <div class="reply d-flex align-items-center bg-light p-2 mb-2 rounded-2" data-reply-id="{{ reply['_id']}}">
+                    <div class="reply d-flex align-items-center  p-2 mb-2 rounded-2" data-reply-id="{{ reply['_id']}}">
                         <img src="{{ reply['user_info']['profile_image'] }}" class="reply-profile img-fluid me-3"
                             alt="Reply Image">
                         <div class="ml-1">
                             <div>
                                 <strong>{{ reply['user_info']['generation'] }}기 {{ reply['user_info']['nickname']}}</strong>
-                                <button class="btn btn-outline-danger reply-delete-toggle ml-1">삭제</button>
+                                <button class="delete-btn reply-delete-toggle ml-1">삭제</button>
                             </div>
                             <p class="reply-text mt-2">{{ reply['content'] }}</p>
                         </div>
@@ -252,7 +252,7 @@
     <div class="comment-write-section p-3 rounded shadow-sm bg-light" data-article-id="{{article['_id']}}">
         <div class="d-flex align-items-start">
             <!-- 프로필 이미지 -->
-            <img src="{{ writer['profile_image'] }}" class="rounded-circle me-2" alt="Profile Image" width="50"
+            <img src="{{ user['profile_image'] }}" class="rounded-circle me-2" alt="Profile Image" width="50"
                 height="50">
 
             <!-- 입력 필드 -->
