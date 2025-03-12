@@ -105,11 +105,15 @@ def send_otp():
 def verify_otp():
     email = request.form["user_email"]
     user_otp = request.form["user_otp"]
+    
+    print(otp_store)
+
 
     if email not in otp_store:
         return jsonify({"message": "인증번호가 발급되지 않았습니다.", "check": "false"})
 
     otp_data = otp_store[email]
+    
 
     kst = pytz.timezone("Asia/Seoul")
     kst_now = datetime.datetime.now(kst)  # 현재 KST 시간

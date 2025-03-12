@@ -5,6 +5,7 @@ import jwt
 import hashlib
 import requests
 import datetime
+import pytz
 import random
 import os
 from datetime import datetime
@@ -319,7 +320,11 @@ def write():
         content = request.form.get("content")
         user_data = get_user_data_by_token()
         user_id = user_data.get("_id")  # ObjectId 문자열
-        date = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+        kst = pytz.timezone("Asia/Seoul")  # 한국 시간대 설정
+        kst_now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(kst)  # UTC → KST 변환
+
+        formatted_time = kst_now.strftime("%Y-%m-%d %H:%M")  # 원하는 형식으로 변환
+        date = formatted_time
 
         #먼저 데이터 저장
         article_data = {
@@ -404,6 +409,11 @@ def edit_post(article_id):
     
     if not any(image_paths):
         image_paths = existing_images
+        
+    kst = pytz.timezone("Asia/Seoul")  # 한국 시간대 설정
+    kst_now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(kst)  # UTC → KST 변환
+
+    formatted_time = kst_now.strftime("%Y-%m-%d %H:%M")  # 원하는 형식으로 변환
     
     articles_collection.update_one(
         {"_id": ObjectId(article_id)}, 
@@ -411,7 +421,7 @@ def edit_post(article_id):
             "category": category,
             "title": title, 
             "content": content,
-            "date": datetime.utcnow().strftime("%Y-%m-%d %H:%M"),
+            "date": formatted_time,
             "images": image_paths
             }
         }
