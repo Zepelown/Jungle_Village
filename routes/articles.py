@@ -80,16 +80,19 @@ def index():
         "index.html", articles=articles, query=query, category=category
     )
     
-@bp.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico')
+
 
 
 @bp.route("/<article_id>")
 def article_detail(article_id):
     user_data = get_user_data_by_token()
     
+    if not ObjectId.is_valid(article_id):
+        return "잘못된 ID 형식입니다.", 400
     article = articles_collection.find_one({"_id": ObjectId(article_id)})
+    
+
+    
     if not article:
         flash("게시글을 찾을 수 없습니다.", "danger")
         return redirect(url_for("articles.index"))
