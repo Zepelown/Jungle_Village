@@ -95,6 +95,7 @@
                 type: "POST",
                 url: "/auth/verify_otp",
                 data: { user_email: $('#user_email').val(), user_otp: $('#otp_code').val()},
+                async: false,
                 success: function (response) {
                     alert(response['message']);
                     if(response['check'] === "true"){
@@ -113,9 +114,10 @@
                             $.ajax({
                                 type: "POST",
                                 url: "/auth/set_pw",
+                                async: false,
                                 data: { user_email: $('#user_email').val(), new_password: new_pw.toString() },
-                                success: function (response) {
-                                    alert(response['message']);
+                                success: function (res) {
+                                    alert(res['message']);
                                 }
                             })
                         }
@@ -189,7 +191,7 @@
                       <input class="input_size" id="user_email" type="text"><span id="checkbox_email">❌</span>
                     </p>
                 </div>
-                <p><button class="btn btn-link" id="btn_submit" type="submit" onclick="">돌아가기</button></p>
+                <p><button class="btn btn-link" id="btn_submit" type="submit" onclick="window.location.href = '/'">돌아가기</button></p>
                 
             </div>
         </div>
