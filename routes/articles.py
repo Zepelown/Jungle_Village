@@ -55,6 +55,8 @@ def article_detail(article_id):
         for reply in comment.get('replies', []):
             reply['user_info'] = users_collection.find_one({"_id": ObjectId(reply['user_id'])})
     
+    print(comments)
+    
     return render_template("article_detail.html", article=article, user=user, comments=comments)
 
 @bp.route("/write")
