@@ -19,7 +19,7 @@ def allowed_file(filename):
 def get_current_user_id():
     #추후에 사용자 ID를 가져오는 로직으로 변경해야함 (현재는 더미 데이터)
     return "67cfb44b8c8918f658c51832"
-ggit
+
 @bp.route("/")
 def index():
     query = request.args.get("q", "").strip()  # 검색어 가져오기
