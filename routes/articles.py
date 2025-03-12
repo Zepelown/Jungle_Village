@@ -314,7 +314,7 @@ def write():
         content = request.form.get("content")
         user_data = get_user_data_by_token()
         user_id = user_data.get("_id")  # ObjectId 문자열
-        date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+        date = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
 
         #먼저 데이터 저장
         article_data = {
