@@ -17,12 +17,17 @@
 
             $.ajax({
                 type: "POST",
-                url: "/send_question",
+                url: "/auth/send_question",
                 data: {user_contact: contact, question_title: title, question_content: content,
                     msg_tag: tag
                 },
                 success: function(response){
-                    
+                    if(response['success'] === true){
+                      alert('정상 접수되었습니다.');
+                    }
+                    else{
+                      alert('Error!, 잠시 후 다시 시도해주세요.');
+                    }
                 }
             })
 

@@ -33,6 +33,26 @@ def verify_token(token):
 def load_qna():
     return render_template("qna.html")
 
+@bp.route("/send_question", methods=["POST"])
+def send_question():
+    contact = request.form['user_contact']
+    title = request.form['question_title']
+    content = request.form['question_content']
+    tag = request.form['msg_tag']
+
+    msg_title = tag + ' ' + title
+    msg_body = content + '\nContact: ' + contact
+
+
+    msg = Message(msg_title, sender='jungle.8.306.5@gmail.com', recipients=['jungle.8.306.5@gmail.com'])
+    msg.body = msg_body
+
+    try:
+        mail.send(msg)
+        return jsonify({"success": True, "message": "Email sent successfully!"})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
 @bp.route("/send_otp", methods=['POST'])
 def send_otp():
     email = request.form['user_email']
