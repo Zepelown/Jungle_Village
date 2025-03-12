@@ -52,7 +52,6 @@
                 contentType: "application/json",
                 data: JSON.stringify({
                     comment_id: commentId,
-                    user_id: "67cfb44b8c8918f658c51832", // 실제 로그인된 사용자 ID로 변경 필요
                     content: replyText
                 }),
                 success: function (response) {
@@ -159,22 +158,32 @@
 {% block content %}
 <div class="right-section flex-column">
     <div class="article-container p-4 mb-4 rounded-3">
-        <div class="d-flex justify-content-between align-items-end">
+        <div class="d-flex justify-content-between align-items-center">
+            <!-- 게시글 제목 -->
             <h3 class="article-title m-0">
                 <a href="{{ url_for('articles.article_detail', article_id=article['_id']) }}"
-                    class="text-decoration-none fw-bold text-dark">
+                    class="text-decoration-none fw-bold text-dark hover-text-primary">
                     {{ article['title'] }}
                 </a>
             </h3>
-            <p class="edit-article m-0 ms-3 text-primary fw-semibold" role="button">
-                <a href="{{ url_for('articles.edit_get', article_id=article['_id']) }}"
-                    class="">
-                    수정하기
-                </a>
-
-
-            </p>
+            
+            <div class="d-flex align-items-center">
+                <!-- 수정하기 링크 -->
+                <p class="m-0 ms-3 text-primary fw-semibold hover-text-primary" role="button">
+                    <a href="{{ url_for('articles.edit_get', article_id=article['_id']) }}" class="d-inline-block">
+                        <i class="bi bi-pencil-fill me-1"></i> 수정하기
+                    </a>
+                </p>
+                
+                <!-- 삭제하기 링크 -->
+                <p class="m-0 ms-3 ml-1 text-danger fw-semibold hover-text-danger" role="button">
+                    <a href="{{ url_for('articles.delete_article', article_id=article['_id']) }}" class="d-inline-block">
+                        <i class="bi bi-trash-fill me-1"></i> 삭제하기
+                    </a>
+                </p>
+            </div>
         </div>
+        
 
         <div class="article-meta mb-3 text-muted">
             <span>작성자 | {{ writer['generation'] }}기 {{ writer['nickname'] }}</span>

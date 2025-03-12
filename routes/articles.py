@@ -115,6 +115,24 @@ def article_detail(article_id):
     return render_template(
         "article_detail.html", article=article, writer=writer, comments=comments, total_comments=total_comments,user=user_data
     )
+@bp.route("/delete/<article_id>")
+def delete_article(article_id):
+    user_data = get_user_data_by_token()
+    
+    article = articles_collection.find_one({"_id": ObjectId(article_id)})
+    if not article:
+        flash("게시글을 찾을 수 없습니다.", "danger")
+        return redirect(url_for("articles.index"))
+    
+    if user_data.get('_id') != article["user_id"]:
+        flash("게시글 작성자가 아닙니다.", "danger")
+        return jsonify({"error": "게시글 작성자가 아닙니다."}), 404
+    
+    articles_collection.delete_one({"_id": ObjectId(article_id)})
+    comments_collection.delete_one({"article_id": ObjectId(article_id)})
+    
+    flash("게시글이 삭제되었습니다.", "success")
+    return redirect(url_for("articles.index"))
 
 
 @bp.route("/reply", methods=["POST"])

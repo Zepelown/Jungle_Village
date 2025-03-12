@@ -90,3 +90,19 @@
     text-decoration: none; /* hover 시 밑줄 없애기 */
     color: #0056b3;        /* hover 색상 */
 }
+
+/* 링크 스타일 기본 설정 (a 태그 기본 색상 리셋) */
+a {
+    color: inherit;  /* 부모 요소의 색상을 상속받게 설정 */
+    text-decoration: none;  /* 링크의 밑줄 제거 */
+}
+
+/* 수정하기 호버 효과 */
+.hover-text-primary:hover {
+    color: #007bff; /* 파란색 */
+}
+
+/* 삭제하기 호버 효과 */
+.hover-text-danger:hover {
+    color: #dc3545; /* 빨간색 */
+}
