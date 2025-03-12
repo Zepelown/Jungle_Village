@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, current_app, send_from_directory
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, current_app, send_from_directory,g
 from bson.objectid import ObjectId
 from create_app import mongo, SECRET_KEY
 import jwt
@@ -44,6 +44,12 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@bp.before_request
+def load_user_data():
+    # 로그인한 유저의 데이터를 가져오는 예시 (Flask-Login 사용 시)
+    user_data = get_user_data_by_token()
+    g.user = user_data
+    print(g.user)
 
 @bp.route("/")
 def index():
