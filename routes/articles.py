@@ -69,7 +69,7 @@ def index():
         search_filter["category"] = category
 
     # 필터링된 게시글 가져오기
-    articles = list(articles_collection.find(search_filter))
+    articles = list(articles_collection.find(search_filter).sort("date", -1))
 
     # 작성자 정보 추가
     for article in articles:

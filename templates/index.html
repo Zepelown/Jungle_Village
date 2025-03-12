@@ -4,10 +4,18 @@
 
 
 {% block extra_css %}
-<link
-rel="stylesheet"
-href="{{ url_for('static', filename='css/writing.css') }}"
-/>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/writing.css') }}" />
+<style>
+    .card {
+        width: inherit;
+        /* 원하는 높이로 설정 */
+        max-height: 400px;
+        overflow: hidden;
+        /* 내용이 넘치면 숨김 */
+    }
+</style>
+
+
 {% endblock %}
 
 {% block content %}
@@ -29,10 +37,10 @@ href="{{ url_for('static', filename='css/writing.css') }}"
             <p class="card-text"> {{ article['content'] }} </p>
             {% if article['images'] %}
             <div class="card-img-bottom">
-                <div class="d-flex justify-content-start">
+                <div class="d-flex justify-content-start" style="overflow-x: auto; white-space: nowrap;">
                     {% for image in article['images'] %}
-                    <img src="{{ image }}" class="img-fluid me-2" alt="Article Image"
-                        style="width: 100%; height: auto; object-fit: contain; max-height: 150px;">
+                    <img src="{{ image }}" class="img-fluid me-2 ml-1" alt="Article Image"
+                        style="height: auto; object-fit: contain; max-height: 150px; width: auto;">
                     {% endfor %}
                 </div>
             </div>
