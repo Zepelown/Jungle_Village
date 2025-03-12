@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, current_app, send_from_directory,g
 from bson.objectid import ObjectId
 from create_app import mongo, SECRET_KEY
 import jwt
@@ -29,10 +29,10 @@ def verify_token(token):
         return None
     
 def get_user_data_by_token():
-    auth_response = auth_response = requests.get(get_auth_url(), cookies=request.cookies)
+    auth_response = requests.get(get_auth_url(), cookies=request.cookies)
         
     if auth_response.status_code != 200:
-        return redirect(url_for("auth.log_in")), jsonify({"error": "토큰이 만료되어 재로그인을 해주세요."})
+        return None
     
     user_data = auth_response.json()
     return user_data
@@ -44,6 +44,20 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@bp.before_request
+def load_user_data():
+    # 로그인한 유저의 데이터를 가져오는 예시 (Flask-Login 사용 시)
+    user_data = get_user_data_by_token()
+    
+    if user_data is None:
+        # 로그인해야 할 경우 리다이렉트
+        return redirect(url_for('auth.log_in'))
+    
+    if not user_data.get('profile_image'):
+        user_data['profile_image'] = url_for('static', filename='default_img.png')  # 기본 이미지 경로 설정
+    
+    g.user = user_data
+    print(g.user)
 
 @bp.route("/")
 def index():
@@ -79,13 +93,20 @@ def index():
     return render_template(
         "index.html", articles=articles, query=query, category=category
     )
+    
+
 
 
 @bp.route("/<article_id>")
 def article_detail(article_id):
     user_data = get_user_data_by_token()
     
+    if not ObjectId.is_valid(article_id):
+        return "잘못된 ID 형식입니다.", 400
     article = articles_collection.find_one({"_id": ObjectId(article_id)})
+    
+
+    
     if not article:
         flash("게시글을 찾을 수 없습니다.", "danger")
         return redirect(url_for("articles.index"))
@@ -298,7 +319,7 @@ def write():
         content = request.form.get("content")
         user_data = get_user_data_by_token()
         user_id = user_data.get("_id")  # ObjectId 문자열
-        date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+        date = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
 
         #먼저 데이터 저장
         article_data = {
@@ -397,3 +418,9 @@ def edit_post(article_id):
     )
     
     return redirect(url_for("articles.article_detail",article_id=article_id))
+
+@bp.route("/mypage")
+def mypage():
+    user_data = get_user_data_by_token()
+    return render_template("mypage.html")
+

@@ -8,6 +8,7 @@
         integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="icon" href="/static/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}" />
     {% block extra_css %}
 
     {% endblock %}
@@ -16,28 +17,6 @@
         function submitForm() {
             document.getElementById("searchForm").submit();
         }
-        function load_user_and_setting() {
-            $.ajax({
-                url: "/auth/find_user_by_token",
-                method: "GET",
-                contentType: "application/json",
-                success: function (response) {
-                    if (response.nickname) {
-                        $(".nickname").text(response.nickname);  // 닉네임 부분을 업데이트
-                    }
-                    if (response.profile_image) {
-                        // 프로필 이미지도 업데이트
-                        $("img[alt='프로필 이미지']").attr("src", response.profile_image);  // 이미지 src 변경
-                    }
-                },
-                error: function (xhr) {
-                    alert("닉네임을 가져오는 데 실패했습니다: " + xhr.responseJSON.error);
-                }
-            });
-        }
-        $(document).ready(function () {
-            load_user_and_setting();
-        });
     </script>
 
     {% block script %}
@@ -88,13 +67,17 @@
             <div class="container">
                 <div class="profile-container">
                     <div class="profile">
-                        <a href="{{ url_for('auth.mypage') }}">
+                        <!-- <a href="{{ url_for('articles.mypage') }}">
                             <img src="{{ profile_img if profile_img else '../static/default_img.png' }}"
+                                alt="프로필 이미지" />
+                        </a> -->
+                        <a href="{{ url_for('articles.mypage') }}">
+                            <img src="{{ g.user.profile_image }}"
                                 alt="프로필 이미지" />
                         </a>
                     </div>
 
-                    <p class="nickname"></p>
+                    <p class="nickname">{{ g.user.nickname }}</p>
 
                     <div class="container d-flex flex-column align-items-center w-100">
                         <button type="button" class="btn btn-outline-secondary mb-2 w-60"

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, g
 from bson.objectid import ObjectId
 from create_app import mongo, SECRET_KEY
 from create_app import mail
@@ -9,6 +9,7 @@ import requests
 import datetime
 import random
 import pytz
+import os
 
 bp = Blueprint("auth", __name__)
 
@@ -17,10 +18,11 @@ otp_store = {}
 db = mongo.db
 user_from_db = mongo.db.users
 
+def get_auth_url():
+    return f"{request.host_url}auth/find_user_by_token"
 
 def generate_otp():
     return str(random.randint(100000, 999999))
-
 
 def verify_token(token):
     try:
@@ -30,7 +32,21 @@ def verify_token(token):
         return None
     except jwt.InvalidTokenError:
         return None
+    
+def get_user_data_by_token():
+    auth_response = auth_response = requests.get(get_auth_url(), cookies=request.cookies)
+        
+    if auth_response.status_code != 200:
+        return None
+    
+    user_data = auth_response.json()
+    return user_data
 
+UPLOAD_FOLDER = 'static/profile_image'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @bp.route("/qna")
 def load_qna():
@@ -239,7 +255,57 @@ def check_nickname():
         response = jsonify({"message": "사용 가능 닉네임입니다.", "check": "true"})
         return response
 
+@bp.route("/update_profile_image", methods=["POST"])
+def update_profile_image():
+    user_data = get_user_data_by_token()
+    user_id = user_data.get("_id")
+    file = request.files.get('profile_image')
 
-@bp.route("/mypage")
-def mypage():
-    return render_template("mypage.html")
+    if not file or not allowed_file(file.filename):
+        return jsonify({"message": "유효한 이미지 파일('jpg', 'jpeg', 'png')형식으로 업로드 해주세요.", "status": "error"})
+
+    file_extension = file.filename.rsplit('.', 1)[1].lower()
+    filename = f"{user_id}.{file_extension}"
+    file_path = os.path.join(UPLOAD_FOLDER, filename)
+    file.save(file_path)
+
+    db.users.update_one(
+        {"_id": ObjectId(user_id)}, 
+        {"$set": {"profile_image": f"/static/profile_image/{filename}"}}
+    )
+
+    return jsonify({"message": "프로필 사진이 변경되었습니다", "status": "success"})
+
+@bp.route("/update_nickname", methods=["POST"])
+def update_nickname():
+    user_data = get_user_data_by_token()
+    user_id = user_data.get("_id")
+    new_nickname = request.form['user_nickname']
+
+    # 닉네임 중복 체크
+    existing_user = db.users.find_one({"nickname": new_nickname})
+    if existing_user:
+        return jsonify({"message": "중복된 닉네임입니다.", "status": "error"})
+
+    # MongoDB에서 닉네임 업데이트
+    db.users.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": {"nickname": new_nickname}}
+    )
+
+    return jsonify({"message": "닉네임이 성공적으로 변경되었습니다", "status": "success"})
+
+@bp.route("/update_password", methods=["POST"])
+def update_password():
+    user_data = get_user_data_by_token()
+    user_id = user_data.get("_id")
+    new_password = request.form['password']
+
+    # 비밀번호 변경
+    db.users.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": {"password": new_password}}
+    )
+
+    # 성공적인 비밀번호 변경 후 응답
+    return jsonify({"message": "비밀번호가 성공적으로 변경되었습니다.", "status": "success"})

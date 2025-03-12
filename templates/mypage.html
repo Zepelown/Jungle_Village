@@ -1,44 +1,147 @@
 {% extends "base_main.html" %}
-
 {% block title %}마이페이지{% endblock %}
-
 {% block extra_css %}
-<link
-rel="stylesheet"
-href="{{ url_for('static', filename='css/mypage.css') }}"
-/>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mypage.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/writing.css') }}" />
+{% endblock %}
+{% block script %}
+<script>
+  function set_nickname() {
+    let nickname = $("#nickname_input").val();
+    if (!nickname) {
+      alert("닉네임을 입력해주세요!");
+      return;
+    }
+
+    $.ajax({
+      type: "POST",
+      url: "/auth/update_nickname",
+      data: { user_nickname: nickname },
+      success: function (response) {
+        if(response.status == "success"){
+          alert("닉네임 변경 완료!");
+          location.reload();
+        } else {
+          alert("닉네임 변경 실패!");
+        }
+      },
+    });
+  }
+
+  function set_password(event) {
+    let password = $("#password_input").val();
+    if (!password) {
+        alert("비밀번호를 입력해주세요!");
+        return;
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "/auth/update_password",
+        data: { password: password },  // 이 방식은 기본적으로 application/x-www-form-urlencoded 방식
+        success: function (response) {
+            if (response.status === "success") {
+                alert("비밀번호 변경 완료!");
+                location.reload();
+            } else {
+                alert("비밀번호 변경 실패!");
+            }
+        },
+        error: function (xhr, status, error) {
+            alert("서버 오류: " + error);
+        }
+    });
+}
+
+  function changeProfileImage(event) {
+    let file = $("#profile_image_input")[0].files[0];
+    if (!file) {
+      alert("이미지를 선택해주세요");
+      return;
+    }
+
+    let formData = new FormData();
+    formData.append("profile_image", file);
+
+    $.ajax({
+      url: "/auth/update_profile_image",
+      method: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function (response) {
+        alert("프로필 사진이 변경되었습니다.");
+        $("img[alt='프로필 이미지']").attr("src", response.profile_image);
+        location.reload();
+      },
+      error: function (xhr) {
+        alert("프로필 사진 변경에 실패했습니다: " + xhr.responseJSON.message);
+      },
+    });
+  }
+
+  function previewProfileImage() {
+    let fileInput = document.getElementById("profile_image_input");
+    let preview = document.getElementById("profile_preview");
+
+    if (fileInput.files && fileInput.files[0]) {
+        let reader = new FileReader();
+
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+        };
+
+        reader.readAsDataURL(fileInput.files[0]);
+    }
+}
+</script>
 {% endblock %}
 
 {% block content %}
-<div class="wrap">
-  <div class="container">
-    <div class="right-section" id="writeForm">
-      <div class="profile text-center">
-        <img
-          src="{{ profile_img if profile_img else '../static/default_img.png' }}"
-          class="profile-img"
-        />
-      </div>
-
-      <div class="text-center mt-3">
-        <button id="btnChangeProfile" class="btn2 btn btn-secondary">
-          사진 변경
-        </button>
-      </div>
-
-      <form class="mt-4">
-        <div class="form-group">
-          <label for="nicknameInput">닉네임</label>
-          <input
-            type="text"
-            class="form-control"
-            id="nicknameInput"
-            placeholder="닉네임을 입력하세요."
-          />
-        </div>
-        <button type="submit" class="btn btn-success">제출하기</button>
-      </form>
-    </div>
+<div class="right-section" id="writeForm">
+  <div class="profile-container">
+    <!-- 현재 프로필 이미지 미리보기 -->
+    <img id="profile_preview" src="{{ g.user.profile_image }}" alt="프로필 이미지">
+  
+    <!-- 사용자 정의 파일 선택 버튼 -->
+    <label for="profile_image_input" class="custom-file-upload">
+      사진 선택
+    </label>
+    <input type="file" id="profile_image_input" accept="image/*" onchange="previewProfileImage()" />
+    
+    <button type="button" class="btn btn-primary" onclick="changeProfileImage()">
+      사진 변경
+    </button>
   </div>
+  
+<!-- 
+  <div class="text-center mt-3">
+    <input type="file" id="profile_image_input" accept="image/*" class="form-control mb-2" />
+    <button type="button" class="btn btn-primary" onclick="changeProfileImage()">
+      사진변경
+    </button>
+  </div> -->
+
+  <form class="mt-4">
+    <div class="form-group">
+      <label for="nickname_input">닉네임</label>
+      <input type="text" class="form-control" id="nickname_input" placeholder="닉네임을 입력하세요." />
+    </div>
+    <button type="button" class="btn btn-success" onclick="set_nickname()">
+      닉네임 변경
+    </button>
+  </form>
+
+  <form class="mt-4">
+    <div class="form-group">
+      <label for="nickname_input">비밀번호</label>
+      <input type="text" class="form-control" id="password_input" placeholder="비밀번호를 입력하세요." />
+    </div>
+    <button type="button" class="btn btn-success" onclick="set_password()">
+      비밀번호 변경
+    </button>
+  </form>
 </div>
+
+
 {% endblock %}
