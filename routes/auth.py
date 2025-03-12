@@ -206,7 +206,7 @@ def complete_sign_up():
         "password": password,
         "nickname": nickname,
         "generation": generation,
-        "profile_image": "/static/profile_image/default.png"
+        "profile_image": url_for("static", filename="default_img.png", _external=True)
     }
     db.users.insert_one(user)
 
