@@ -94,7 +94,7 @@ def sign_in():
 
     if result:
         token = jwt.encode(
-            {"email": email, "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=1)},
+            {"email": email, "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
             SECRET_KEY,
             algorithm="HS256"
         )

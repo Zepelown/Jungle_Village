@@ -102,7 +102,50 @@
                     location.reload();
                 },
                 error: function (xhr) {
-                    alert("답글 작성에 실패했습니다: " + xhr.responseJSON.error);
+                    alert("댓글 작성에 실패했습니다: " + xhr.responseJSON.error);
+                }
+            });
+        });
+
+        $(".comment-delete-toggle").click(function () {
+            const commentDiv = $(this).closest(".comment");  // .comment 요소를 찾아야 함
+            const commentId = commentDiv.attr("data-comment-id");  // .comment에서 data-comment-id 가져옴
+            $.ajax({
+                url: "/comment",
+                method: "DELETE",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    user_id: "67cfb44b8c8918f658c51832", // 실제 로그인된 사용자 ID로 변경 필요
+                    comment_id: commentId,
+                }),
+                success: function (response) {
+                    location.reload();
+                },
+                error: function (xhr) {
+                    alert("삭제에 실패했습니다: " + xhr.responseJSON.error);
+                }
+            });
+        });
+
+        $(".reply-delete-toggle").click(function () {
+            const commentDiv = $(this).closest(".comment"); 
+            const commentId = commentDiv.attr("data-comment-id");
+            const replyDiv = $(this).closest(".reply");  
+            const replyId = replyDiv.attr("data-reply-id"); 
+            $.ajax({
+                url: "/reply",
+                method: "DELETE",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    user_id: "67cfb44b8c8918f658c51832", // 실제 로그인된 사용자 ID로 변경 필요
+                    reply_id: replyId,
+                    comment_id: commentId
+                }),
+                success: function (response) {
+                    location.reload();
+                },
+                error: function (xhr) {
+                    alert("삭제에 실패했습니다: " + xhr.responseJSON.error);
                 }
             });
         });
@@ -162,22 +205,24 @@
                                 data-comment-id="{{ comment['_id'] }}">
                                 답글 쓰기
                             </button>
+                            <button class="btn btn-outline-danger comment-delete-toggle ml-1">삭제</button>
                         </div>
                         <p class="comment-text mt-2">{{ comment['content'] }}</p>
                     </div>
-
                 </div>
 
                 <!-- 기존 대댓글 표시 -->
                 {% if comment['replies'] %}
                 <div class="replies mt-3 ms-5">
                     {% for reply in comment['replies'] %}
-                    <div class="reply d-flex align-items-center bg-light p-2 mb-2 rounded-2">
+                    <div class="reply d-flex align-items-center bg-light p-2 mb-2 rounded-2" data-reply-id="{{ reply['_id']}}">
                         <img src="{{ reply['user_info']['profile_image'] }}" class="reply-profile img-fluid me-3"
                             alt="Reply Image">
                         <div class="ml-1">
-                            <strong>{{ reply['user_info']['generation'] }}기 {{ reply['user_info']['nickname']
-                                }}</strong>
+                            <div>
+                                <strong>{{ reply['user_info']['generation'] }}기 {{ reply['user_info']['nickname']}}</strong>
+                                <button class="btn btn-outline-danger reply-delete-toggle ml-1">삭제</button>
+                            </div>
                             <p class="reply-text mt-2">{{ reply['content'] }}</p>
                         </div>
                     </div>
