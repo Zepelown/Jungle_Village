@@ -48,6 +48,9 @@ def allowed_file(filename):
 def load_user_data():
     # 로그인한 유저의 데이터를 가져오는 예시 (Flask-Login 사용 시)
     user_data = get_user_data_by_token()
+    if not user_data.get('profile_image'):
+        user_data['profile_image'] = '/static/default_img.png'  # 기본 이미지 경로 설정
+    
     g.user = user_data
     print(g.user)
 
