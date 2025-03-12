@@ -185,14 +185,10 @@
 
         {% if article['images'] %}
         <div class="article-images mb-4">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            <div class="d-flex justify-content-start" style="overflow-x: auto; white-space: nowrap;">
                 {% for image in article['images'] %}
-                <div class="col">
-                    <div class="image-card rounded-3 overflow-hidden shadow-sm">
-                        <img src="{{ image }}" class="img-fluid" alt="Article Image"
-                            style="object-fit: cover; height: 250px;">
-                    </div>
-                </div>
+                <img src="{{ image }}" class="img-fluid me-2 ml-1" alt="Article Image"
+                    style="height: auto; object-fit: contain; max-height: 300px; width: 100%;">
                 {% endfor %}
             </div>
         </div>
