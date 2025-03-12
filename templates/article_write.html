@@ -6,12 +6,7 @@ block extra_css %}
 />
 {% endblock %} {% block content %}
 <div class="right-section" id="writeForm">
-  <form
-    mehotd="POST"
-    enctype="multipart/form-data"
-    onsubmit="return validateFileCount()"
-    class="form"
-  >
+  <form method="POST" enctype="multipart/form-data" class="form">
     <div class="form-group">
       <label for="category">카테고리 선택</label>
       <select class="form-control" id="category" name="category">
@@ -41,33 +36,24 @@ block extra_css %}
     </div>
 
     <div class="form-group">
-      <label for="image">이미지 첨부</label>
-      <input
-        type="file"
-        class="form-control-file"
-        id="image"
-        name="image"
-        multiple
-        accept="image/*"
-        onchange="validateFileCount()"
-      />
-      <small id="fileHelp" class="form-text text-muted"
-        >최대 5개 이미지 첨부 가능합니다.</small
-      >
+      <label for="image">이미지 첨부 (최대 5개만)</label>
+
+      {% for i in range(5) %}
+      <div class="image-upload-field">
+        <input
+          type="file"
+          class="form-control-file"
+          id="image{{ i }}"
+          name="image{{ i }}"
+          accept="image/*"
+        />
+      </div>
+      {% endfor %}
     </div>
-    <button type="submit" class="btn btn-success">제출하기</button>
+
+    <div class="form-group text-center">
+      <button type="submit" class="btn btn-success">제출하기</button>
+    </div>
   </form>
 </div>
-
-<script>
-  function validateFileCount() {
-    var input = document.getElementById("image");
-    if (input.files.length > 5) {
-      alert("최대 5개 이미지만 첨부 가능합니다.");
-      input.value = "";
-      return false;
-    }
-    return true;
-  }
-</script>
 {% endblock %}
