@@ -81,7 +81,7 @@
             else{
                 $.ajax({
                 type: "POST",
-                url: "/send_otp",
+                url: "/auth/send_otp",
                 data: { user_email: $('#user_email').val() },
                 success: function (response) {
                     alert(response['message']);
@@ -93,7 +93,7 @@
         function verify_otp(){
             $.ajax({
                 type: "POST",
-                url: "/verify_otp",
+                url: "/auth/verify_otp",
                 data: { user_email: $('#user_email').val(), user_otp: $('#otp_code').val()},
                 success: function (response) {
                     alert(response['message']);
@@ -112,7 +112,7 @@
                             
                             $.ajax({
                                 type: "POST",
-                                url: "/set_pw",
+                                url: "/auth/set_pw",
                                 data: { user_email: $('#user_email').val(), new_password: new_pw.toString() },
                                 success: function (response) {
                                     alert(response['message']);
@@ -137,7 +137,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/check_email",
+                url: "/auth/check_email",
                 data: { user_email: email },
                 success: function (response) {
                     let check = response['check']
