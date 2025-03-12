@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, current_app
 from bson.objectid import ObjectId
 from create_app import mongo, SECRET_KEY
 import jwt
@@ -16,6 +16,9 @@ articles_collection = mongo.db.articles
 users_collection = mongo.db.users
 comments_collection = mongo.db.comments
 
+def get_auth_url():
+    return f"{request.host_url}auth/find_user_by_token"
+
 def verify_token(token):
     try:
         result = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
@@ -24,15 +27,23 @@ def verify_token(token):
         return None
     except jwt.InvalidTokenError:
         return None
+    
+def get_user_data_by_token():
+    auth_response = auth_response = requests.get(get_auth_url(), cookies=request.cookies)
+        
+    if auth_response.status_code != 200:
+        return redirect(url_for("auth.log_in")), jsonify({"error": "토큰이 만료되어 재로그인을 해주세요."})
+    
+    user_data = auth_response.json()
+    return user_data
+    
 
 UPLOAD_FOLDER = 'static/article_image'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def get_current_user_id():
-    #추후에 사용자 ID를 가져오는 로직으로 변경해야함 (현재는 더미 데이터)
-    return "67cfb44b8c8918f658c51832"
 
 
 @bp.route("/")
@@ -73,6 +84,10 @@ def index():
 
 @bp.route("/<article_id>")
 def article_detail(article_id):
+    token = request.cookies.get("jwt")
+    if not (token and verify_token(token)):
+        return redirect(url_for("auth.log_in"))
+    
     article = articles_collection.find_one({"_id": ObjectId(article_id)})
     if not article:
         flash("게시글을 찾을 수 없습니다.", "danger")
@@ -108,9 +123,11 @@ def article_detail(article_id):
 @bp.route("/reply", methods=["POST"])
 def reply():
     try:
+        user_data = get_user_data_by_token()
+        user_id = user_data.get("_id")  # ObjectId 문자열
+        
         data = request.json
         comment_id = data.get("comment_id")
-        user_id = data.get("user_id")  # 현재 로그인한 사용자 ID
         content = data.get("content")
 
         if not comment_id or not user_id or not content:
@@ -152,13 +169,15 @@ def reply():
 @bp.route("/reply", methods=["DELETE"])
 def delete_reply():
     try:
+        user_data = get_user_data_by_token()
+        user_id = user_data.get("_id")  # ObjectId 문자열
+        
         data = request.json
         comment_id = data.get("comment_id")  # 댓글 ID
         reply_id = data.get("reply_id")  # 삭제할 대댓글 ID
-        user_id = data.get("user_id")  # 현재 로그인한 사용자 ID
 
         if not comment_id or not reply_id or not user_id:
-            return jsonify({"error": "필수 데이터가 누락되었습니다."}), 400
+            return jsonify({"error": "필수 데이터가 누락되었습니다."}), 400, redirect(url_for("auth.log_in"))
 
         # 해당 댓글을 찾아서 대댓글이 존재하는지 확인
         comment = comments_collection.find_one({"_id": ObjectId(comment_id)})
@@ -190,13 +209,12 @@ def delete_reply():
 @bp.route("/comment", methods=["POST"])
 def comment():
     try:
+        user_data = get_user_data_by_token()
+        user_id = user_data.get("_id")  # ObjectId 문자열
+        
         data = request.json
-        user_id = data.get("user_id")
         article_id = data.get("article_id")
         content = data.get("content")
-
-        print(user_id)
-        print(content)
 
         if not user_id or not content:
             return jsonify({"error": "필수 데이터가 누락되었습니다."}), 400
@@ -223,9 +241,10 @@ def comment():
 @bp.route("/comment", methods=["DELETE"])
 def delete_comment():
     try:
+        user_data = get_user_data_by_token()
+        user_id = user_data.get("_id")  # ObjectId 문자열
         data = request.json
         comment_id = data.get("comment_id")
-        user_id = data.get("user_id")
 
         if not user_id or not comment_id:
             return jsonify({"error": "필수 데이터가 누락되었습니다."}), 400
@@ -249,7 +268,8 @@ def write():
         category = request.form.get("category")
         title = request.form.get("title")
         content = request.form.get("content")
-        user_id = get_current_user_id()
+        user_data = get_user_data_by_token()
+        user_id = user_data.get("_id")  # ObjectId 문자열
         date = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
 
         image_files = request.files.getlist('image')

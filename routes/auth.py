@@ -108,10 +108,14 @@ def find_user_by_token():
     if token and verify_token(token):
         result = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         email = result.get("email")
-        user = db.users.find_one({"email" : email }, {"_id": 0, "password": 0})
-        return jsonify(user)
-    else:
-        return jsonify({'error':"Can't find User"})
+
+        user = db.users.find_one({"email": email}, {"password": 0})  # 비밀번호 제외하고 조회
+
+        if user:
+            user["_id"] = str(user["_id"])  # ObjectId를 문자열로 변환
+            return jsonify(user)
+        
+    return jsonify({'error':"Can't find User"})
     
 
 @bp.route("/log_in")
