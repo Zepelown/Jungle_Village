@@ -6,7 +6,7 @@ from flask_mail import Mail, Message
 import jwt
 import hashlib
 import requests
-import datetime
+from datetime import datetime, timedelta
 import random
 import pytz
 import os
@@ -171,7 +171,7 @@ def sign_in():
 
     kst = pytz.timezone("Asia/Seoul")
     kst_now = datetime.now(kst)  # 현재 KST 시간
-    expires_at = kst_now + datetime.timedelta(minutes=30)
+    expires_at = kst_now + timedelta(minutes=30)
 
     if result:
         token = jwt.encode(
