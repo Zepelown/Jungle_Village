@@ -87,7 +87,7 @@ def send_otp():
     new_otp = generate_otp()
 
     kst = pytz.timezone("Asia/Seoul")
-    kst_now = datetime.datetime.now(kst)  # 현재 KST 시간
+    kst_now = datetime.now(kst)  # 현재 KST 시간
     expires_at = kst_now + datetime.timedelta(minutes=5)
 
     otp_store[email] = {"otp": new_otp, "expires": expires_at}
@@ -116,7 +116,7 @@ def verify_otp():
     
 
     kst = pytz.timezone("Asia/Seoul")
-    kst_now = datetime.datetime.now(kst)  # 현재 KST 시간
+    kst_now = datetime.now(kst)  # 현재 KST 시간
 
     if kst_now > otp_data["expires"]:
         return jsonify({"message": "인증번호가 만료되었습니다.", "check": "false"})
