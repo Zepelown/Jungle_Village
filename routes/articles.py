@@ -148,7 +148,7 @@ def delete_article(article_id):
     
     if user_data.get('_id') != article["user_id"]:
         flash("게시글 작성자가 아닙니다.", "danger")
-        return jsonify({"error": "게시글 작성자가 아닙니다."}), 404
+        return redirect(url_for("articles.index"))
     
     articles_collection.delete_one({"_id": ObjectId(article_id)})
     comments_collection.delete_one({"article_id": ObjectId(article_id)})
