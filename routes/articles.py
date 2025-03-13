@@ -411,7 +411,7 @@ def edit_post(article_id):
         image_paths = existing_images
         
     kst = pytz.timezone("Asia/Seoul")  # 한국 시간대 설정
-    kst_now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(kst)  # UTC → KST 변환
+    kst_now = datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(kst)  # UTC → KST 변환
 
     formatted_time = kst_now.strftime("%Y-%m-%d %H:%M")  # 원하는 형식으로 변환
     
