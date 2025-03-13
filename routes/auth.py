@@ -6,7 +6,7 @@ from flask_mail import Mail, Message
 import jwt
 import hashlib
 import requests
-from datetime import datetime, timedelta
+import datetime, timedelta
 import random
 import pytz
 import os
