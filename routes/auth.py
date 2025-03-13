@@ -6,7 +6,7 @@ from flask_mail import Mail, Message
 import jwt
 import hashlib
 import requests
-import datetime, timedelta
+from datetime import datetime, timedelta
 import random
 import pytz
 import os
@@ -86,9 +86,11 @@ def send_otp():
 
     new_otp = generate_otp()
 
+
     kst = pytz.timezone("Asia/Seoul")
     kst_now = datetime.now(kst)  # 현재 KST 시간
-    expires_at = kst_now + datetime.timedelta(minutes=5)
+    expires_at = kst_now + timedelta(minutes=5)  # timedelta 사용
+
 
     otp_store[email] = {"otp": new_otp, "expires": expires_at}
 
@@ -168,10 +170,10 @@ def sign_in():
     pw = request.form["user_password"]
 
     result = user_from_db.find_one({"email": email, "password": pw})
-
+    
     kst = pytz.timezone("Asia/Seoul")
     kst_now = datetime.now(kst)  # 현재 KST 시간
-    expires_at = kst_now + timedelta(minutes=30)
+    expires_at = kst_now + timedelta(minutes=5)  # timedelta 사용
 
     if result:
         token = jwt.encode(
